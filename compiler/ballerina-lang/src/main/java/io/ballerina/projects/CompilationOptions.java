@@ -28,6 +28,7 @@ public class CompilationOptions {
     Boolean observabilityIncluded;
     Boolean dumpBir;
     Boolean dumpBirFile;
+    Boolean dumpASTFile;
     String cloud;
     Boolean listConflictedClasses;
     Boolean sticky;
@@ -44,8 +45,8 @@ public class CompilationOptions {
     Boolean optimizeDependencyCompilation;
     String lockingMode;
 
-    CompilationOptions(Boolean offlineBuild, Boolean experimental,
-                       Boolean observabilityIncluded, Boolean dumpBir, Boolean dumpBirFile,
+    CompilationOptions(Boolean offlineBuild, Boolean experimental, Boolean observabilityIncluded,
+                       Boolean dumpBir, Boolean dumpBirFile, Boolean dumpASTFile,
                        String cloud, Boolean listConflictedClasses, Boolean sticky,
                        Boolean dumpGraph, Boolean dumpRawGraphs, Boolean withCodeGenerators,
                        Boolean withCodeModifiers, Boolean configSchemaGen, Boolean exportOpenAPI,
@@ -56,6 +57,7 @@ public class CompilationOptions {
         this.observabilityIncluded = observabilityIncluded;
         this.dumpBir = dumpBir;
         this.dumpBirFile = dumpBirFile;
+        this.dumpASTFile = dumpASTFile;
         this.cloud = cloud;
         this.listConflictedClasses = listConflictedClasses;
         this.sticky = sticky;
@@ -95,6 +97,10 @@ public class CompilationOptions {
 
     public Boolean dumpBirFile() {
         return toBooleanDefaultIfNull(this.dumpBirFile);
+    }
+
+    public Boolean dumpASTFile() {
+        return toBooleanDefaultIfNull(this.dumpASTFile);
     }
 
     public Boolean dumpGraph() {
@@ -181,6 +187,11 @@ public class CompilationOptions {
             compilationOptionsBuilder.setDumpBirFile(theirOptions.dumpBirFile);
         } else {
             compilationOptionsBuilder.setDumpBirFile(this.dumpBirFile);
+        }
+        if (theirOptions.dumpASTFile != null) {
+            compilationOptionsBuilder.setDumpASTFile(theirOptions.dumpASTFile);
+        } else {
+            compilationOptionsBuilder.setDumpASTFile(this.dumpASTFile);
         }
         if (theirOptions.dumpGraph != null) {
             compilationOptionsBuilder.setDumpGraph(theirOptions.dumpGraph);
@@ -288,6 +299,7 @@ public class CompilationOptions {
         private Boolean observabilityIncluded;
         private Boolean dumpBir;
         private Boolean dumpBirFile;
+        private Boolean dumpASTFile;
         private String cloud;
         private Boolean listConflictedClasses;
         private Boolean sticky;
@@ -342,6 +354,11 @@ public class CompilationOptions {
 
         CompilationOptionsBuilder setDumpBirFile(Boolean value) {
             dumpBirFile = value;
+            return this;
+        }
+
+        CompilationOptionsBuilder setDumpASTFile(Boolean value) {
+            dumpASTFile = value;
             return this;
         }
 
@@ -407,7 +424,7 @@ public class CompilationOptions {
 
         public CompilationOptions build() {
             return new CompilationOptions(offline, experimental, observabilityIncluded, dumpBir,
-                    dumpBirFile, cloud, listConflictedClasses, sticky, dumpGraph, dumpRawGraph,
+                    dumpBirFile, dumpASTFile, cloud, listConflictedClasses, sticky, dumpGraph, dumpRawGraph,
                     withCodeGenerators, withCodeModifiers, configSchemaGen, exportOpenAPI,
                     exportComponentModel, enableCache, disableSyntaxTree, remoteManagement,
                     optimizeDependencyCompilation, lockingMode);
