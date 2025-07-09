@@ -17,6 +17,22 @@
  */
 package io.ballerina.cli.cmd;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.wso2.ballerinalang.util.RepoUtils;
+import picocli.CommandLine;
+
 import io.ballerina.cli.BLauncherCmd;
 import io.ballerina.cli.TaskExecutor;
 import io.ballerina.cli.task.CleanTargetDirTask;
@@ -28,16 +44,27 @@ import io.ballerina.cli.task.RunBuildToolsTask;
 import io.ballerina.cli.utils.BuildTime;
 import io.ballerina.cli.utils.FileUtils;
 import io.ballerina.projects.BuildOptions;
+import io.ballerina.projects.Document;
+import io.ballerina.projects.DocumentId;
+import io.ballerina.projects.Module;
 import io.ballerina.projects.Project;
 import io.ballerina.projects.ProjectException;
 import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.directory.SingleFileProject;
 import io.ballerina.projects.util.ProjectConstants;
-import org.wso2.ballerinalang.util.RepoUtils;
-import picocli.CommandLine;
-
-import java.io.PrintStream;
-import java.nio.file.Path;
+import io.ballerina.compiler.internal.parser.BallerinaParser;
+import io.ballerina.compiler.internal.parser.ParserFactory;
+import io.ballerina.compiler.internal.parser.ParserRuleContext;
+import io.ballerina.compiler.internal.parser.tree.STIdentifierToken;
+import io.ballerina.compiler.internal.parser.tree.STInvalidNodeMinutiae;
+import io.ballerina.compiler.internal.parser.tree.STMinutiae;
+import io.ballerina.compiler.internal.parser.tree.STNode;
+import io.ballerina.compiler.internal.parser.tree.STNodeDiagnostic;
+import io.ballerina.compiler.internal.parser.tree.STNodeList;
+import io.ballerina.compiler.internal.parser.tree.STToken;
+import io.ballerina.compiler.internal.syntax.SyntaxUtils;
+import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import io.ballerina.compiler.syntax.tree.SyntaxTree;
 
 import static io.ballerina.cli.cmd.Constants.BUILD_COMMAND;
 import static io.ballerina.projects.util.ProjectUtils.isProjectUpdated;
@@ -70,7 +97,7 @@ public class BuildCommand implements BLauncherCmd {
     }
 
     BuildCommand(Path projectPath, PrintStream outStream, PrintStream errStream, boolean exitWhenFinish,
-                 Boolean optimizeDependencyCompilation) {
+            Boolean optimizeDependencyCompilation) {
         this.projectPath = projectPath;
         this.outStream = outStream;
         this.errStream = errStream;
@@ -80,7 +107,7 @@ public class BuildCommand implements BLauncherCmd {
     }
 
     BuildCommand(Path projectPath, PrintStream outStream, PrintStream errStream, boolean exitWhenFinish,
-                        boolean dumpBuildTime) {
+            boolean dumpBuildTime) {
         this.projectPath = projectPath;
         this.outStream = outStream;
         this.errStream = errStream;
@@ -90,7 +117,7 @@ public class BuildCommand implements BLauncherCmd {
     }
 
     BuildCommand(Path projectPath, PrintStream outStream, PrintStream errStream, boolean exitWhenFinish,
-                        String output) {
+            String output) {
         this.projectPath = projectPath;
         this.outStream = outStream;
         this.errStream = errStream;
@@ -100,7 +127,7 @@ public class BuildCommand implements BLauncherCmd {
     }
 
     BuildCommand(Path projectPath, PrintStream outStream, PrintStream errStream, boolean exitWhenFinish,
-                        Path targetDir) {
+            Path targetDir) {
         this.projectPath = projectPath;
         this.outStream = outStream;
         this.errStream = errStream;
@@ -110,7 +137,7 @@ public class BuildCommand implements BLauncherCmd {
     }
 
     BuildCommand(Path projectPath, PrintStream outStream, PrintStream errStream, boolean exitWhenFinish,
-                 boolean dumpBuildTime, boolean nativeImage, String graalVMBuildOptions) {
+            boolean dumpBuildTime, boolean nativeImage, String graalVMBuildOptions) {
         this.projectPath = projectPath;
         this.outStream = outStream;
         this.errStream = errStream;
@@ -121,16 +148,17 @@ public class BuildCommand implements BLauncherCmd {
         this.graalVMBuildOptions = graalVMBuildOptions;
     }
 
-    @CommandLine.Option(names = {"--output", "-o"}, description = "Write the output to the given file. The provided " +
-                                                                  "output file name may or may not contain the " +
-                                                                  "'.jar' extension.")
+    @CommandLine.Option(names = { "--output", "-o" }, description = "Write the output to the given file. The provided "
+            +
+            "output file name may or may not contain the " +
+            "'.jar' extension.")
     private String output;
 
-    @CommandLine.Option(names = {"--offline"}, description = "Build/Compile offline without downloading " +
-                                                              "dependencies.")
+    @CommandLine.Option(names = { "--offline" }, description = "Build/Compile offline without downloading " +
+            "dependencies.")
     private Boolean offline;
 
-    @CommandLine.Parameters (arity = "0..1")
+    @CommandLine.Parameters(arity = "0..1")
     private final Path projectPath;
 
     @CommandLine.Option(names = "--dump-bir", hidden = true)
@@ -139,6 +167,9 @@ public class BuildCommand implements BLauncherCmd {
     @CommandLine.Option(names = "--dump-bir-file", hidden = true)
     private Boolean dumpBIRFile;
 
+    @CommandLine.Option(names = "--dump-ast-file", description = "Dump the AST to a file.", hidden = true)
+    private Boolean dumpASTFile;
+
     @CommandLine.Option(names = "--dump-graph", description = "Print the dependency graph.", hidden = true)
     private boolean dumpGraph;
 
@@ -146,7 +177,7 @@ public class BuildCommand implements BLauncherCmd {
             "dependency resolution process.", hidden = true)
     private boolean dumpRawGraphs;
 
-    @CommandLine.Option(names = {"--help", "-h"}, hidden = true)
+    @CommandLine.Option(names = { "--help", "-h" }, hidden = true)
     private boolean helpFlag;
 
     @CommandLine.Option(names = "--experimental", description = "Enable experimental language features.")
@@ -173,8 +204,7 @@ public class BuildCommand implements BLauncherCmd {
             "the executable JAR file(s).")
     private Boolean remoteManagement;
 
-    @CommandLine.Option(names = "--list-conflicted-classes",
-            description = "list conflicted classes when generating executable")
+    @CommandLine.Option(names = "--list-conflicted-classes", description = "list conflicted classes when generating executable")
     private Boolean listConflictedClasses;
 
     @CommandLine.Option(names = "--dump-build-time", description = "calculate and dump build time", hidden = true)
@@ -191,8 +221,7 @@ public class BuildCommand implements BLauncherCmd {
     private Boolean exportOpenAPI;
 
     @CommandLine.Option(names = "--export-component-model", description = "generate a model to represent " +
-            "interactions between the package components (i.e. service/type definitions) and, export it in JSON format",
-            hidden = true)
+            "interactions between the package components (i.e. service/type definitions) and, export it in JSON format", hidden = true)
     private Boolean exportComponentModel;
 
     @CommandLine.Option(names = "--enable-cache", description = "enable caches for the compilation", hidden = true)
@@ -209,12 +238,10 @@ public class BuildCommand implements BLauncherCmd {
             "generation")
     private String graalVMBuildOptions;
 
-    @CommandLine.Option(names = "--optimize-dependency-compilation", hidden = true,
-            description = "experimental memory optimization for large projects")
+    @CommandLine.Option(names = "--optimize-dependency-compilation", hidden = true, description = "experimental memory optimization for large projects")
     private Boolean optimizeDependencyCompilation;
 
-    @CommandLine.Option(names = "--locking-mode", hidden = true,
-            description = "allow passing the package locking mode.")
+    @CommandLine.Option(names = "--locking-mode", hidden = true, description = "allow passing the package locking mode.")
     private String lockingMode;
 
     @Override
@@ -225,7 +252,6 @@ public class BuildCommand implements BLauncherCmd {
             this.errStream.println(commandUsageInfo);
             return;
         }
-
 
         // load project
         Project project;
@@ -276,7 +302,28 @@ public class BuildCommand implements BLauncherCmd {
             }
         }
 
-        // Validate Settings.toml file
+        if (this.dumpASTFile != null && this.dumpASTFile) {
+            String astJSON = generateJSON(this.projectPath);
+            if (astJSON != null) {
+                try {
+                   Path outputDir;
+                    if (FileUtils.hasExtension(this.projectPath)) {
+                        outputDir = this.projectPath.toAbsolutePath().getParent();
+                    } else {
+                        outputDir = this.projectPath;
+                    }
+                    
+                    String fileName = getASTFileName();
+                    Path astFile = outputDir.resolve(fileName);
+                    Files.writeString(astFile, astJSON, StandardCharsets.UTF_8);
+                    this.outStream.println("AST JSON written to: " + astFile.toAbsolutePath());
+                } catch (IOException e) {
+                    this.errStream.println("Failed to write AST JSON to file: " + e.getMessage());
+                    return;
+                }
+            }
+        }
+        
         RepoUtils.readSettings();
 
         if (!project.buildOptions().nativeImage() && !project.buildOptions().graalVMBuildOptions().isEmpty()) {
@@ -318,6 +365,7 @@ public class BuildCommand implements BLauncherCmd {
                 .setRemoteManagement(remoteManagement)
                 .setDumpBir(dumpBIR)
                 .setDumpBirFile(dumpBIRFile)
+                .setDumpASTFile(dumpASTFile)
                 .setDumpGraph(dumpGraph)
                 .setDumpRawGraphs(dumpRawGraphs)
                 .setListConflictedClasses(listConflictedClasses)
@@ -360,5 +408,238 @@ public class BuildCommand implements BLauncherCmd {
 
     @Override
     public void setParentCmdParser(CommandLine parentCmdParser) {
+    }
+
+    private String generateJSON(Path sourceFilePath) {
+        try {
+            if (Files.isDirectory(sourceFilePath)) {
+                return generateJSONForProject(sourceFilePath);
+            } else {
+                return generateJSONForFile(sourceFilePath);
+            }
+        } catch (IOException e) {
+            this.errStream.println("Failed to generate AST JSON: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private String generateJSONForProject(Path projectPath) throws IOException {
+        Path[] balFiles = Files.walk(projectPath)
+                .filter(path -> path.toString().endsWith(".bal"))
+                .filter(path -> !path.toString().contains("target"))
+                .limit(10)
+                .toArray(Path[]::new);
+
+        if (balFiles.length == 0) {
+            this.errStream.println("No .bal files found in the project.");
+            return null;
+        }
+
+        JsonObject projectJson = new JsonObject();
+        JsonArray filesArray = new JsonArray();
+        boolean hasParseErrors = false;
+
+        for (Path balFile : balFiles) {
+            JsonObject fileJson = new JsonObject();
+            fileJson.addProperty("file", projectPath.relativize(balFile).toString());
+
+            try {
+                String content = Files.readString(balFile, StandardCharsets.UTF_8);
+                STNode tree = parseSource(content);
+                fileJson.add("ast", getJSONFromSTNode(tree));
+            } catch (Exception e) {
+                this.errStream.println("Failed to parse file " + projectPath.relativize(balFile).toString() + ": " + e.getMessage());
+                hasParseErrors = true;
+                break;
+            }
+
+            filesArray.add(fileJson);
+        }
+
+        if (hasParseErrors) {
+            return null;
+        }
+
+        projectJson.add("files", filesArray);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(projectJson);
+    }
+
+    private String generateJSONForFile(Path sourceFilePath) throws IOException {
+        try {
+            byte[] bytes = Files.readAllBytes(sourceFilePath);
+            String content = new String(bytes, StandardCharsets.UTF_8);
+            STNode tree = parseSource(content);
+            return generateJSONFromSTNode(tree);
+        } catch (Exception e) {
+            this.errStream.println("Failed to parse file " + sourceFilePath.getFileName() + ": " + e.getMessage());
+            throw new IOException("Parse error occurred", e);
+        }
+    }
+
+    private STNode parseSource(String source) {
+        BallerinaParser parser = ParserFactory.getParser(source);
+        return parser.parse(ParserRuleContext.COMP_UNIT);
+    }
+
+    private String generateJSONFromSTNode(STNode treeNode) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(getJSONFromSTNode(treeNode));
+    }
+
+    private JsonElement getJSONFromSTNode(STNode treeNode) {
+        JsonObject jsonNode = new JsonObject();
+        SyntaxKind nodeKind = treeNode.kind;
+        jsonNode.addProperty("kind", nodeKind.name());
+
+        if (treeNode.isMissing()) {
+            jsonNode.addProperty("isMissing", treeNode.isMissing());
+            addDiagnosticsToJSON(treeNode, jsonNode);
+            if (isToken(treeNode)) {
+                addTriviaToJSON((STToken) treeNode, jsonNode);
+            }
+            return jsonNode;
+        }
+
+        addDiagnosticsToJSON(treeNode, jsonNode);
+        if (isToken(treeNode)) {
+            if (!isKeyword(nodeKind)) {
+                jsonNode.addProperty("value", getTokenText((STToken) treeNode));
+            }
+            addTriviaToJSON((STToken) treeNode, jsonNode);
+        } else {
+            addChildrenToJSON(treeNode, jsonNode);
+        }
+
+        return jsonNode;
+    }
+
+    private void addChildrenToJSON(STNode tree, JsonObject node) {
+        JsonArray children = new JsonArray();
+        int size = tree.bucketCount();
+        for (int i = 0; i < size; i++) {
+            STNode childNode = tree.childInBucket(i);
+            if (childNode == null || childNode.kind == SyntaxKind.NONE) {
+                continue;
+            }
+            children.add(getJSONFromSTNode(childNode));
+        }
+        node.add("children", children);
+    }
+
+    private void addTriviaToJSON(STToken token, JsonObject jsonNode) {
+        if (token.leadingMinutiae().bucketCount() != 0) {
+            addMinutiaeListToJSON((STNodeList) token.leadingMinutiae(), jsonNode, "leadingMinutiae");
+        }
+
+        if (token.trailingMinutiae().bucketCount() != 0) {
+            addMinutiaeListToJSON((STNodeList) token.trailingMinutiae(), jsonNode, "trailingMinutiae");
+        }
+    }
+
+    private void addMinutiaeListToJSON(STNodeList minutiaeList, JsonObject node, String key) {
+        JsonArray minutiaeJsonArray = new JsonArray();
+        int size = minutiaeList.size();
+        for (int i = 0; i < size; i++) {
+            STMinutiae minutiae = (STMinutiae) minutiaeList.get(i);
+            JsonObject minutiaeJson = new JsonObject();
+            minutiaeJson.addProperty("kind", minutiae.kind.name());
+            switch (minutiae.kind) {
+                case WHITESPACE_MINUTIAE:
+                case END_OF_LINE_MINUTIAE:
+                case COMMENT_MINUTIAE:
+                    minutiaeJson.addProperty("value", minutiae.text());
+                    break;
+                case INVALID_NODE_MINUTIAE:
+                    STInvalidNodeMinutiae invalidNodeMinutiae = (STInvalidNodeMinutiae) minutiae;
+                    STNode invalidNode = invalidNodeMinutiae.invalidNode();
+                    minutiaeJson.add("invalidNode", getJSONFromSTNode(invalidNode));
+                    break;
+                default:
+                    break;
+            }
+            minutiaeJsonArray.add(minutiaeJson);
+        }
+        node.add(key, minutiaeJsonArray);
+    }
+
+    private void addDiagnosticsToJSON(STNode treeNode, JsonObject jsonNode) {
+        if (!treeNode.hasDiagnostics()) {
+            return;
+        }
+
+        jsonNode.addProperty("hasDiagnostics", treeNode.hasDiagnostics());
+        Collection<STNodeDiagnostic> diagnostics = treeNode.diagnostics();
+        if (diagnostics.isEmpty()) {
+            return;
+        }
+
+        JsonArray diagnosticsJsonArray = new JsonArray();
+        diagnostics.forEach(syntaxDiagnostic -> diagnosticsJsonArray.add(syntaxDiagnostic.diagnosticCode().toString()));
+        jsonNode.add("diagnostics", diagnosticsJsonArray);
+    }
+
+    private boolean isToken(STNode node) {
+        return SyntaxUtils.isToken(node);
+    }
+
+    private boolean isKeyword(SyntaxKind syntaxKind) {
+        return SyntaxKind.IDENTIFIER_TOKEN.compareTo(syntaxKind) > 0 || syntaxKind == SyntaxKind.EOF_TOKEN;
+    }
+
+    private String getTokenText(STToken token) {
+        switch (token.kind) {
+            case IDENTIFIER_TOKEN:
+                return ((STIdentifierToken) token).text;
+            case STRING_LITERAL_TOKEN:
+                String val = token.text();
+                int stringLen = val.length();
+                int lastCharPosition = val.endsWith("\"") ? stringLen - 1 : stringLen;
+                return val.substring(1, lastCharPosition);
+            case DECIMAL_INTEGER_LITERAL_TOKEN:
+            case HEX_INTEGER_LITERAL_TOKEN:
+            case DECIMAL_FLOATING_POINT_LITERAL_TOKEN:
+            case HEX_FLOATING_POINT_LITERAL_TOKEN:
+            case PARAMETER_NAME:
+            case DEPRECATION_LITERAL:
+            case INVALID_TOKEN:
+                return token.text();
+            default:
+                return token.text();
+        }
+    }
+
+    private String getASTFileName() {
+        if (FileUtils.hasExtension(this.projectPath)) {
+            String fileName = this.projectPath.getFileName().toString();
+            int extensionIndex = fileName.lastIndexOf('.');
+            if (extensionIndex > 0) {
+                fileName = fileName.substring(0, extensionIndex);
+            }
+            return fileName + ".json";
+        } else {
+            Path ballerinaTomlPath = this.projectPath.resolve("Ballerina.toml");
+            if (Files.exists(ballerinaTomlPath)) {
+                try {
+                    String content = Files.readString(ballerinaTomlPath, StandardCharsets.UTF_8);
+                    String[] lines = content.split("\n");
+                    for (String line : lines) {
+                        line = line.trim();
+                        if (line.startsWith("name") && line.contains("=")) {
+                            String name = line.substring(line.indexOf('=') + 1).trim();
+                            name = name.replaceAll("^\"|\"$", "");
+                            if (!name.isEmpty()) {
+                                return name + ".json";
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    this.errStream.println("Warning: Failed to read Ballerina.toml: " + e.getMessage());
+                    return this.projectPath.getFileName().toString() + ".json";
+                }
+            }
+            return this.projectPath.getFileName().toString() + ".json";
+        }
     }
 }

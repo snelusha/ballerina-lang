@@ -204,6 +204,7 @@ public class BuildOptions {
         buildOptionsBuilder.setObservabilityIncluded(compilationOptions.observabilityIncluded);
         buildOptionsBuilder.setDumpBir(compilationOptions.dumpBir);
         buildOptionsBuilder.setDumpBirFile(compilationOptions.dumpBirFile);
+        buildOptionsBuilder.setDumpASTFile(compilationOptions.dumpASTFile);
         buildOptionsBuilder.setDumpGraph(compilationOptions.dumpGraph);
         buildOptionsBuilder.setDumpRawGraphs(compilationOptions.dumpRawGraphs);
         buildOptionsBuilder.setCloud(compilationOptions.cloud);
@@ -364,6 +365,11 @@ public class BuildOptions {
 
         public BuildOptionsBuilder setDumpBirFile(Boolean value) {
             compilationOptionsBuilder.setDumpBirFile(value);
+            return this;
+        }
+
+        public BuildOptionsBuilder setDumpASTFile(Boolean value) {
+            compilationOptionsBuilder.setDumpASTFile(value);
             return this;
         }
 
