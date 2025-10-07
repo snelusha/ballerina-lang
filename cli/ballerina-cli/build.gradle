@@ -18,6 +18,14 @@
 plugins {
     id 'javaProject'
     id 'ballerinaLangLibLoad'
+
+    id "java"
+    id "war"
+    id "org.teavm" version "0.12.3"
+}
+
+repositories {
+    mavenCentral()
 }
 
 configurations {
@@ -62,6 +70,8 @@ dependencies {
     implementation libs.jacoco.core
     implementation libs.jacoco.report
     implementation libs.commons.io
+
+    implementation teavm.libs.jsoApis
 
     testImplementation libs.testng
     testImplementation libs.mockito.core
@@ -178,3 +188,19 @@ javadoc {
 
 tasks.compileJava.dependsOn(':testerina:testerina-core:copyInteropImports')
 tasks.javadoc.dependsOn(':testerina:testerina-core:copyInteropImports')
+
+teavm {
+    all {
+        mainClass = "io.ballerina.cli.launcher.Main"
+    }
+
+    js {
+        addedToWebApp = true
+        targetFileName = "ballerina.js"
+    }
+
+    wasmGC {
+        addedToWebApp = true
+        targetFileName = "ballerina.wasm"
+    }
+}
