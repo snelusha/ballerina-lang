@@ -63,6 +63,8 @@ public class BIREmitter {
     public BLangPackage emit(BLangPackage bLangPackage) {
         if (bLangPackage.moduleContextDataHolder.isDumpBir()) {
             emit(bLangPackage.symbol.bir);
+            System.out.println("[DEBUG]: BIR generation done!");
+            System.exit(0);
         }
         return bLangPackage;
     }
