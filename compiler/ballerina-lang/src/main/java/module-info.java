@@ -18,6 +18,7 @@ module io.ballerina.lang {
     requires io.ballerina.central.client;
     requires io.ballerina.semtype;
     requires io.ballerina.identifier;
+    requires io.ballerina.teavm;
     requires java.semver;
     requires maven.resolver;
     exports io.ballerina.compiler.api;

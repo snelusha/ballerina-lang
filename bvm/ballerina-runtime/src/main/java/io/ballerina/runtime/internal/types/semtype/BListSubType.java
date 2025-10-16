@@ -31,6 +31,8 @@ import io.ballerina.runtime.api.types.semtype.Pair;
 import io.ballerina.runtime.api.types.semtype.SemType;
 import io.ballerina.runtime.api.types.semtype.SubType;
 
+import io.ballerina.teavm.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -286,7 +288,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
                     SemType[] t = memberTypes.clone();
                     t[i] = d;
                     // We need to make index i be required
-                    if (listInhabited(cx, indices, t, Integer.max(nRequired, i + 1), neg.next())) {
+                    if (listInhabited(cx, indices, t, NumberUtils.max(nRequired, i + 1), neg.next())) {
                         return true;
                     }
                 }
@@ -336,7 +338,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
             if (tem != null) {
                 ListAtomicType lt = cx.listAtomType(tem.atom());
                 FixedLengthArray m = lt.members();
-                maxInitialLength = Integer.max(maxInitialLength, m.initial().length);
+                maxInitialLength = NumberUtils.max(maxInitialLength, m.initial().length);
                 if (m.fixedLength() > maxInitialLength) {
                     fixedLengths.add(m.fixedLength());
                 }
@@ -371,7 +373,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
         for (int b : boundaries) {
             int segmentLength = b - lastBoundary;
             // Cannot have more samples than are in the parition.
-            int nSamples = Integer.min(segmentLength, nNeg);
+            int nSamples = NumberUtils.min(segmentLength, nNeg);
             for (int i = b - nSamples; i < b; i++) {
                 indices.add(i);
             }
@@ -403,7 +405,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
         if (listLengthsDisjoint(members1, rest1, members2, rest2)) {
             return null;
         }
-        int max = Integer.max(members1.fixedLength(), members2.fixedLength());
+        int max = NumberUtils.max(members1.fixedLength(), members2.fixedLength());
         SemType[] initial = new SemType[max];
         for (int i = 0; i < max; i++) {
             initial[i] =
@@ -411,7 +413,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
                             listMemberAt(members2, rest2, i));
         }
         return Pair.from(FixedLengthArray.from(initial,
-                        Integer.max(members1.fixedLength(), members2.fixedLength())),
+                        NumberUtils.max(members1.fixedLength(), members2.fixedLength())),
                 intersectCellMemberSemTypes(env, rest1, rest2));
     }
 
@@ -437,7 +439,7 @@ public class BListSubType extends SubType implements DelegatedSubType {
 
     private static SemType fixedArrayGet(FixedLengthArray members, int index) {
         int memberLen = members.initial().length;
-        int i = Integer.min(index, memberLen - 1);
+        int i = NumberUtils.min(index, memberLen - 1);
         return members.initial()[i];
     }
 

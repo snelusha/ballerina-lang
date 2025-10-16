@@ -31,6 +31,8 @@ import io.ballerina.runtime.api.types.semtype.SubType;
 import io.ballerina.runtime.api.types.semtype.TypeAtom;
 import io.ballerina.runtime.internal.TypeChecker;
 
+import io.ballerina.teavm.NumberUtils;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -142,7 +144,7 @@ final class BCellSubTypeSimple extends BCellSubType implements DelegatedSubType 
 
     @Override
     public int hashCode() {
-        return Stream.concat(pos.stream(), neg.stream()).map(SemType::hashCode).reduce(0, Integer::sum);
+        return Stream.concat(pos.stream(), neg.stream()).map(SemType::hashCode).reduce(0, NumberUtils::sum);
     }
 
     @Override

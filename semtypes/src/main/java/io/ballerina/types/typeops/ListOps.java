@@ -17,6 +17,7 @@
  */
 package io.ballerina.types.typeops;
 
+import io.ballerina.teavm.NumberUtils;
 import io.ballerina.types.Atom;
 import io.ballerina.types.BasicTypeOps;
 import io.ballerina.types.Bdd;
@@ -34,6 +35,8 @@ import io.ballerina.types.subtypedata.BddAllOrNothing;
 import io.ballerina.types.subtypedata.BddNode;
 import io.ballerina.types.subtypedata.IntSubtype;
 import io.ballerina.types.subtypedata.Range;
+
+import io.ballerina.teavm.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -216,7 +219,7 @@ public class ListOps extends CommonOps implements BasicTypeOps {
             if (tem != null) {
                 ListAtomicType lt = cx.listAtomType(tem.atom);
                 FixedLengthArray m = lt.members();
-                maxInitialLength = Integer.max(maxInitialLength, m.initial().size());
+                maxInitialLength = NumberUtils.max(maxInitialLength, m.initial().size());
                 if (m.fixedLength() > maxInitialLength) {
                     fixedLengths.add(m.fixedLength());
                 }
@@ -251,7 +254,7 @@ public class ListOps extends CommonOps implements BasicTypeOps {
         for (int b : boundaries) {
             int segmentLength = b - lastBoundary;
             // Cannot have more samples than are in the parition.
-            int nSamples = Integer.min(segmentLength, nNeg);
+            int nSamples = NumberUtils.min(segmentLength, nNeg);
             for (int i = b - nSamples; i < b; i++) {
                 indices.add(i);
             }
@@ -277,14 +280,14 @@ public class ListOps extends CommonOps implements BasicTypeOps {
         // consider fixedLengths not the size of initial members. For example consider any[4] and
         // [int, string, float...]. If we don't consider the fixedLength in the initial part we'll consider only the
         // first two elements and rest will compare essentially 5th element, meaning we are ignoring 3 and 4 elements
-        int max = Integer.max(members1.fixedLength(), members2.fixedLength());
+        int max = NumberUtils.max(members1.fixedLength(), members2.fixedLength());
         List<CellSemType> initial =
                 IntStream.range(0, max)
                         .mapToObj(i -> intersectMemberSemTypes(env, listMemberAt(members1, rest1, i),
                                 listMemberAt(members2, rest2, i)))
                         .toList();
         return TwoTuple.from(FixedLengthArray.from(initial,
-                        Integer.max(members1.fixedLength(), members2.fixedLength())),
+                        NumberUtils.max(members1.fixedLength(), members2.fixedLength())),
                 intersectMemberSemTypes(env, rest1, rest2));
     }
 
@@ -377,7 +380,7 @@ public class ListOps extends CommonOps implements BasicTypeOps {
                     SemType[] t = memberTypes.clone();
                     t[i] = d;
                     // We need to make index i be required
-                    if (listInhabited(cx, indices, t, Integer.max(nRequired, i + 1), neg.next)) {
+                    if (listInhabited(cx, indices, t, NumberUtils.max(nRequired, i + 1), neg.next)) {
                         return true;
                     }
                 }
@@ -423,7 +426,7 @@ public class ListOps extends CommonOps implements BasicTypeOps {
 
     private static CellSemType fixedArrayGet(FixedLengthArray members, int index) {
         int memberLen = members.initial().size();
-        int i = Integer.min(index, memberLen - 1);
+        int i = NumberUtils.min(index, memberLen - 1);
         return members.initial().get(i);
     }
 

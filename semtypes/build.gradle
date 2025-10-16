@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation project(':teavm-utils')
+
     testImplementation libs.testng
 }
 

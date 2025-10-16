@@ -20,10 +20,8 @@ package io.ballerina.cli.launcher;
 
 import io.ballerina.cli.BLauncherCmd;
 import io.ballerina.cli.launcher.util.BalToolsUtil;
-import io.ballerina.projects.BalToolsManifest;
-import io.ballerina.projects.BalToolsToml;
-import io.ballerina.projects.BlendedBalToolsManifest;
-import io.ballerina.projects.SemanticVersion;
+import io.ballerina.projects.*;
+import io.ballerina.projects.directory.ProjectLoader;
 import io.ballerina.projects.internal.BalToolsManifestBuilder;
 import io.ballerina.projects.util.CustomURLClassLoader;
 import io.ballerina.runtime.internal.utils.RuntimeUtils;
@@ -35,7 +33,7 @@ import picocli.CommandLine;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -70,25 +68,37 @@ public final class Main {
     }
 
     public static void main(String... args) {
+        Path projectPath = Path.of(args[0]);
+        Path absProjectPath = projectPath.toAbsolutePath().normalize();
+
+        Project project;
+
         try {
-            Optional<BLauncherCmd> optionalInvokedCmd = getInvokedCmd(args);
-            optionalInvokedCmd.ifPresent(BLauncherCmd::execute);
-        } catch (BLangCompilerException e) {
-            if (!(e.getMessage().contains(COMPILATION_ERROR_MESSAGE))) {
-                // print the error message only if the exception was not thrown due to compilation errors
-                errStream.println(prepareCompilerErrorMessage(e.getMessage()));
-            }
-            // These are compiler errors, and are already logged. Hence simply exit.
-            Runtime.getRuntime().exit(1);
-        } catch (BLauncherException e) {
-            LauncherUtils.printLauncherException(e, errStream);
-            Runtime.getRuntime().exit(1);
-        } catch (RuntimePanicException e) {
-            Runtime.getRuntime().exit(e.getExitCode());
-        } catch (Throwable e) {
-            RuntimeUtils.logBadSad(e);
-            Runtime.getRuntime().exit(1);
+            project = ProjectLoader.load(projectPath).project();
+
+
+        } catch (ProjectException e) {
+            System.err.println(e.getMessage());
         }
+//        try {
+//            Optional<BLauncherCmd> optionalInvokedCmd = getInvokedCmd(args);
+//            optionalInvokedCmd.ifPresent(BLauncherCmd::execute);
+//        } catch (BLangCompilerException e) {
+//            if (!(e.getMessage().contains(COMPILATION_ERROR_MESSAGE))) {
+//                // print the error message only if the exception was not thrown due to compilation errors
+//                errStream.println(prepareCompilerErrorMessage(e.getMessage()));
+//            }
+//            // These are compiler errors, and are already logged. Hence simply exit.
+//            Runtime.getRuntime().exit(1);
+//        } catch (BLauncherException e) {
+//            LauncherUtils.printLauncherException(e, errStream);
+//            Runtime.getRuntime().exit(1);
+//        } catch (RuntimePanicException e) {
+//            Runtime.getRuntime().exit(e.getExitCode());
+//        } catch (Throwable e) {
+//            RuntimeUtils.logBadSad(e);
+//            Runtime.getRuntime().exit(1);
+//        }
     }
 
     private static Optional<BLauncherCmd> getInvokedCmd(String... args) {

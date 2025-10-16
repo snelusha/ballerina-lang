@@ -226,6 +226,8 @@ import org.wso2.ballerinalang.compiler.util.Unifier;
 import org.wso2.ballerinalang.util.AttachPoints;
 import org.wso2.ballerinalang.util.Flags;
 
+import io.ballerina.teavm.NumberUtils;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -4703,7 +4705,7 @@ public class SemanticAnalyzer extends SimpleBLangNodeAnalyzer<SemanticAnalyzer.A
                 continue;
             }
 
-            attachmentCounts.merge(attachment.annotationSymbol, 1, Integer::sum);
+            attachmentCounts.merge(attachment.annotationSymbol, 1, NumberUtils::sum);
         }
 
         attachmentCounts.forEach((symbol, count) -> {

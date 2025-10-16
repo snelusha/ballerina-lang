@@ -291,3 +291,5 @@ develocity {
         termsOfUseAgree = 'yes'
     }
 }
+
+include 'teavm-utils'
