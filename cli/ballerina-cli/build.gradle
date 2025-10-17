@@ -18,6 +18,10 @@
 plugins {
     id 'javaProject'
     id 'ballerinaLangLibLoad'
+
+//    id "java"
+//    id "war"
+//    id "org.teavm" version "0.12.3"
 }
 
 configurations {
@@ -69,6 +73,8 @@ dependencies {
     testImplementation libs.commons.io
     testImplementation libs.commons.codec
     testImplementation libs.jline
+
+//    implementation teavm.libs.jsoApis
 
     distributionBala project(path: ':ballerina-langlib:test', configuration: 'distributionBala')
     distributionBala project(path: ':testerina:testerina-core', configuration: 'distributionBala')
@@ -178,3 +184,19 @@ javadoc {
 
 tasks.compileJava.dependsOn(':testerina:testerina-core:copyInteropImports')
 tasks.javadoc.dependsOn(':testerina:testerina-core:copyInteropImports')
+
+//teavm {
+//    all {
+//        mainClass = "io.ballerina.cli.launcher.Main"
+//    }
+//
+//    js {
+//        addedToWebApp = true
+//        targetFileName = "ballerina.js"
+//    }
+//
+//    wasmGC {
+//        addedToWebApp = true
+//        targetFileName = "ballerina.wasm"
+//    }
+//}

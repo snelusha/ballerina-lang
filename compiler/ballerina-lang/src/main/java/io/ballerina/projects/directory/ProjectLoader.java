@@ -41,6 +41,10 @@ public final class ProjectLoader {
     private ProjectLoader() {
     }
 
+    public static ProjectLoadResult load(String path) {
+        return load(Path.of(path));
+    }
+
     public static ProjectLoadResult load(Path path) {
         return load(path, BuildOptions.builder().build());
     }
