@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 
     id 'war'
     id "org.teavm" version "0.12.3"
@@ -19,6 +20,10 @@ dependencies {
     implementation teavm.libs.jsoApis
 }
 
+application {
+    mainClass = 'io.ballerina.teavm.Main'
+}
+
 jar {
     manifest {
         attributes 'Main-Class': 'io.ballerina.teavm.Main'
@@ -27,7 +32,7 @@ jar {
 
 teavm {
     all {
-        mainClass = 'io.ballerina.teavm.Main'
+        mainClass = application.mainClass
     }
 
     js {
