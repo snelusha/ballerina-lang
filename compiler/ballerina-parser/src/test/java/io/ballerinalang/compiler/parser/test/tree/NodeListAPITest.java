@@ -35,7 +35,7 @@ import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.function.Function;
 
 /**

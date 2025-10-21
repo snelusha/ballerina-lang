@@ -25,7 +25,7 @@ import io.ballerina.tools.text.TextDocuments;
 import io.ballerinalang.compiler.parser.test.ParserTestUtils;
 import org.testng.Assert;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * An abstract class that contains utilities for {@code SyntaxNodeVisitor} tests.

@@ -18,7 +18,7 @@
 package io.ballerina.projects.utils;
 
 import java.io.File;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Utilities required for test cases.

@@ -21,7 +21,7 @@ import io.ballerina.projects.DependencyGraph;
 import io.ballerina.projects.ModuleDescriptor;
 import io.ballerina.projects.PackageDescriptor;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.List;
 import java.util.Optional;
 

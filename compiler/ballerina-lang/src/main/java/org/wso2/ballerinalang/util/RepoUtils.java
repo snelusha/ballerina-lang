@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;

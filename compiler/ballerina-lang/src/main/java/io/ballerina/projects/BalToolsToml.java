@@ -27,7 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Map;
 
 import static io.ballerina.projects.util.ProjectConstants.BAL_TOOLS_TOML;

@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.treegen.targets;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Represents a generated source file.

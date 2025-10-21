@@ -1,0 +1,67 @@
+Class java.nio.file.Path was not found
+    at io.ballerina.projects.directory.SingleFileProject.load(SingleFileProject.java:56)
+    at io.ballerina.teavm.Main.main(Main.java:29)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.Path was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:53)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.attribute.FileAttribute was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:69)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:72)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:75)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:78)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:81)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:85)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:88)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0
+Class java.nio.file.LinkOption was not found
+    at io.ballerina.projects.internal.model.Target.<init>(Target.java:91)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:121)
+    at io.ballerina.projects.JBallerinaBackend.from(JBallerinaBackend.java:114)
+    at io.ballerina.teavm.Main.codegen(Main.java:66)
+    at io.ballerina.teavm.Main.main(Main.java:31)
+    at io.ballerina.teavm.Main.main$exported$0

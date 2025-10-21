@@ -26,7 +26,7 @@ import io.ballerina.projects.test.resolution.packages.internal.GraphUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.StringJoiner;

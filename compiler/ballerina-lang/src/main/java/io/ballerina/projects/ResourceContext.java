@@ -19,7 +19,7 @@ package io.ballerina.projects;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Maintains the internal state of a {@code Resource} instance.

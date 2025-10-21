@@ -31,7 +31,7 @@ import org.ballerinalang.central.client.model.ToolResolutionCentralRequest;
 import org.ballerinalang.central.client.model.ToolResolutionCentralResponse;
 import org.wso2.ballerinalang.util.RepoUtils;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;

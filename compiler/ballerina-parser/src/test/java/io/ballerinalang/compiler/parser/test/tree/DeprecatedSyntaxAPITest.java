@@ -23,7 +23,7 @@ import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * This class tests the deprecated syntax APIs.

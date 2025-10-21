@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 import static io.ballerina.projects.util.ProjectConstants.CACHES_DIR_NAME;
 

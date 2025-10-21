@@ -38,7 +38,7 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import org.wso2.ballerinalang.util.RepoUtils;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

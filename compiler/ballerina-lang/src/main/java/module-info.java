@@ -20,6 +20,7 @@ module io.ballerina.lang {
     requires io.ballerina.identifier;
     requires java.semver;
     requires maven.resolver;
+    requires io.ballerina.fs;
     exports io.ballerina.compiler.api;
     exports io.ballerina.compiler.api.symbols;
     exports io.ballerina.compiler.api.symbols.resourcepath;

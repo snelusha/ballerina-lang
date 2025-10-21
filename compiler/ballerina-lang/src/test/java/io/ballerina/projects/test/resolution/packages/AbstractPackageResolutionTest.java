@@ -28,7 +28,7 @@ import io.ballerina.projects.test.resolution.packages.internal.TestCaseFilePaths
 import io.ballerina.projects.test.resolution.packages.internal.TestCaseFilePaths.TestCaseFilePathsBuilder;
 import org.testng.Assert;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.StringJoiner;
 

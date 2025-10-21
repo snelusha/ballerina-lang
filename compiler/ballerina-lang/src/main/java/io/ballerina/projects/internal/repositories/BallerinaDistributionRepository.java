@@ -22,7 +22,7 @@ import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.util.ProjectConstants;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * This class represents the package respository available in the Ballerina distribution.

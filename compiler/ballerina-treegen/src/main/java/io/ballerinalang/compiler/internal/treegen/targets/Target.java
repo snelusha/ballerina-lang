@@ -30,7 +30,7 @@ import io.ballerinalang.compiler.internal.treegen.model.template.TreeNodeClass;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

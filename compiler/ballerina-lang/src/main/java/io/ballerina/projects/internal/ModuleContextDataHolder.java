@@ -20,7 +20,7 @@ package io.ballerina.projects.internal;
 import io.ballerina.projects.ModuleDescriptor;
 import io.ballerina.projects.ProjectKind;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Data holder class for {@code ModuleContext}.

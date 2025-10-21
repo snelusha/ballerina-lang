@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,11 +68,13 @@ public final class ProjectFiles {
     private ProjectFiles() {
     }
 
-    public static PackageData loadSingleFileProjectPackageData(Path filePath) {
+    public static PackageData loadSingleFileProjectPackageData(String path) {
         DocumentData documentData = DocumentData.fromHardcoded("empty.bal", """
                 public function main() {
                 }
                 """);
+
+        Path filePath = Path.of(path);
         ModuleData defaultModule = ModuleData
                 .from(filePath, DOT, Collections.singletonList(documentData), Collections.emptyList(), null);
         return PackageData.from(filePath, defaultModule, Collections.emptyList(),
@@ -393,7 +395,8 @@ public final class ProjectFiles {
         checkReadPermission(projectDirPath);
     }
 
-    public static void validateSingleFileProjectFilePath(Path filePath) {
+    public static void validateSingleFileProjectFilePath(String path) {
+        Path filePath = Path.of(path);
         if (Files.notExists(filePath)) {
             throw new ProjectException("The file does not exist: " + filePath);
         }

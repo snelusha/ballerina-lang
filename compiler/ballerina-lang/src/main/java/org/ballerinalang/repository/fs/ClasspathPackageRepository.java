@@ -26,7 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.HashMap;
 import java.util.Map;
 

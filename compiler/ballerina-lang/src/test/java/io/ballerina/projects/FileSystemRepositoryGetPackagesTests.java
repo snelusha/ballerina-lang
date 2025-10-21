@@ -26,7 +26,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.List;
 import java.util.Map;
 

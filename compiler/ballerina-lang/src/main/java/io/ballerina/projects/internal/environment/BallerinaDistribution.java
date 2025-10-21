@@ -25,7 +25,7 @@ import io.ballerina.projects.internal.repositories.BallerinaDistributionReposito
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Represents the Ballerina distribution and responsible for initializing the {@code CompilerContext}, distribution

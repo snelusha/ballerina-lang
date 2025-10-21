@@ -33,7 +33,7 @@ import io.ballerina.tools.text.TextRange;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.List;
 import java.util.Optional;
 

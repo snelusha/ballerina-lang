@@ -23,7 +23,7 @@ import io.ballerina.projects.environment.ProjectEnvironment;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 import org.wso2.ballerinalang.compiler.util.CompilerOptions;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.Optional;
  * @since 2.0.0
  */
 public abstract class Project {
-    protected final Path sourceRoot;
+    protected final String sourceRoot;
     private Package currentPackage;
     private BuildOptions buildOptions;
     protected ProjectEnvironment projectEnvironment;
@@ -44,20 +44,20 @@ public abstract class Project {
     private final List<CompilerPluginContextIml> compilerPluginContexts;
     protected WorkspaceProject workspaceProject;
 
-    protected Project(ProjectKind projectKind, Path projectPath,
+    protected Project(ProjectKind projectKind, String projectPath,
                       ProjectEnvironmentBuilder projectEnvironmentBuilder, BuildOptions buildOptions,
                       WorkspaceProject workspaceProject) {
         this.projectKind = projectKind;
-        this.sourceRoot = projectPath.toAbsolutePath().normalize();
+        this.sourceRoot = projectPath;
         this.buildOptions = buildOptions;
         this.projectEnvironment = projectEnvironmentBuilder.build(this);
         this.compilerPluginContexts = new ArrayList<>();
         this.workspaceProject = workspaceProject;
     }
 
-    protected Project(ProjectKind projectKind, Path projectPath, BuildOptions buildOptions) {
+    protected Project(ProjectKind projectKind, String projectPath, BuildOptions buildOptions) {
         this.projectKind = projectKind;
-        this.sourceRoot = projectPath.toAbsolutePath().normalize();
+        this.sourceRoot = projectPath;;
         this.buildOptions = buildOptions;
         this.compilerPluginContexts = new ArrayList<>();
     }
@@ -80,7 +80,7 @@ public abstract class Project {
         setCurrentPackage(newPackage);
     }
 
-    public Path sourceRoot() {
+    public String sourceRoot() {
         return this.sourceRoot;
     }
 
@@ -153,7 +153,7 @@ public abstract class Project {
 
     public abstract DocumentId documentId(Path file);
 
-    public abstract Optional<Path> documentPath(DocumentId documentId);
+    public abstract Optional<String> documentPath(DocumentId documentId);
 
     public abstract void save();
 

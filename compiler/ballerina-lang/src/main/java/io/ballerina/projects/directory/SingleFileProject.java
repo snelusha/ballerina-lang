@@ -33,7 +33,7 @@ import io.ballerina.projects.util.ProjectConstants;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Optional;
 
 /**
@@ -45,15 +45,14 @@ public class SingleFileProject extends Project implements Comparable<Project> {
 
     static ProjectLoadResult loadProject(Path projectPath, ProjectEnvironmentBuilder environmentBuilder,
                                          BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath.toString());
         SingleFileProject singleFileProject = new SingleFileProject(
-                environmentBuilder, projectPath, buildOptions);
+                environmentBuilder, projectPath.toString(), buildOptions);
         singleFileProject.addPackage(packageConfig);
         return new ProjectLoadResult(singleFileProject, singleFileProject.currentPackage().manifest().diagnostics());
     }
 
-    public static SingleFileProject load(String path) {
-        Path projectPath = Path.of(path);
+    public static SingleFileProject load(String projectPath) {
         PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
         SingleFileProject singleFileProject = new SingleFileProject(
                 ProjectEnvironmentBuilder.getDefaultBuilder(), projectPath, BuildOptions.builder().build()
@@ -88,9 +87,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     @Deprecated(forRemoval = true, since = "2201.0.0")
     public static SingleFileProject load(ProjectEnvironmentBuilder environmentBuilder, Path filePath,
                                          BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath);
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath.toString());
         SingleFileProject singleFileProject = new SingleFileProject(
-                environmentBuilder, filePath, buildOptions);
+                environmentBuilder, filePath.toString(), buildOptions);
         singleFileProject.addPackage(packageConfig);
         return singleFileProject;
     }
@@ -105,15 +104,15 @@ public class SingleFileProject extends Project implements Comparable<Project> {
      */
     @Deprecated(forRemoval = true, since = "2201.0.0")
     public static SingleFileProject load(Path filePath, BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath,
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath.toString(),
                 buildOptions.disableSyntaxTree());
         ProjectEnvironmentBuilder environmentBuilder = ProjectEnvironmentBuilder.getDefaultBuilder();
-        SingleFileProject singleFileProject = new SingleFileProject(environmentBuilder, filePath, buildOptions);
+        SingleFileProject singleFileProject = new SingleFileProject(environmentBuilder, filePath.toString(), buildOptions);
         singleFileProject.addPackage(packageConfig);
         return singleFileProject;
     }
 
-    private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, Path filePath, BuildOptions buildOptions) {
+    private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, String filePath, BuildOptions buildOptions) {
         super(ProjectKind.SINGLE_FILE_PROJECT, filePath, environmentBuilder, buildOptions, null);
 
         try {
@@ -137,13 +136,13 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     public Project duplicate() {
         BuildOptions duplicateBuildOptions = BuildOptions.builder().build().acceptTheirs(buildOptions());
         SingleFileProject singleFileProject = new SingleFileProject(
-                ProjectEnvironmentBuilder.getDefaultBuilder(), this.sourceRoot, duplicateBuildOptions);
+                ProjectEnvironmentBuilder.getDefaultBuilder(), this.sourceRoot.toString(), duplicateBuildOptions);
         return resetPackage(singleFileProject);
     }
 
     @Override
     public DocumentId documentId(Path file) {
-        if (!this.sourceRoot.toAbsolutePath().normalize().toString().equals(
+        if (!this.sourceRoot.equals(
                 file.toAbsolutePath().normalize().toString())) {
             throw new ProjectException("'" + file + "' does not belong to the current project");
         }
@@ -151,9 +150,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     }
 
     @Override
-    public Optional<Path> documentPath(DocumentId documentId) {
+    public Optional<String> documentPath(DocumentId documentId) {
         if (this.currentPackage().getDefaultModule().documentIds().iterator().next().equals(documentId)) {
-            return Optional.of(sourceRoot.toAbsolutePath());
+            return Optional.of(sourceRoot);
         }
         return Optional.empty();
     }

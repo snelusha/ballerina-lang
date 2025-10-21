@@ -22,7 +22,7 @@ import io.ballerina.projects.DocumentId;
 import io.ballerina.projects.ResourceConfig;
 import io.ballerina.projects.util.ProjectConstants;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Locale;
 
 /**

@@ -23,7 +23,7 @@ import io.ballerina.projects.PackageVersion;
 import io.ballerina.projects.environment.Environment;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.Collections;
 import java.util.List;
 

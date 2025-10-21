@@ -26,7 +26,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.nio.file.PathMatcher;
 import java.util.stream.Stream;
 

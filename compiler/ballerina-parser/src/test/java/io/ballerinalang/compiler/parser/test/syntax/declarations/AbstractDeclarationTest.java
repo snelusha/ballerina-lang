@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.parser.test.syntax.declarations;
 import io.ballerina.compiler.internal.parser.ParserRuleContext;
 import io.ballerinalang.compiler.parser.test.ParserTestUtils;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 /**
  * Test parsing module level declaration.

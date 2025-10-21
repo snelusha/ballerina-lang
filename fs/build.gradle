@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.ballerinalang'
+version = '2201.13.0-m3'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+test {
+}

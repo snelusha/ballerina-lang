@@ -28,7 +28,7 @@ import io.ballerina.tools.text.TextRange;
 import io.ballerinalang.compiler.parser.test.ParserTestUtils;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

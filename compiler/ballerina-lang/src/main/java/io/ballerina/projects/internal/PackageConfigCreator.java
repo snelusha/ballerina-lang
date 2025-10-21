@@ -38,7 +38,7 @@ import io.ballerina.projects.TomlDocument;
 import io.ballerina.projects.internal.model.PackageJson;
 import io.ballerina.projects.util.ProjectConstants;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -97,7 +97,7 @@ public final class PackageConfigCreator {
        return createBuildProjectConfig(projectDirPath, false, null);
     }
 
-    public static PackageConfig createSingleFileProjectConfig(Path filePath, Boolean disableSyntaxTree) {
+    public static PackageConfig createSingleFileProjectConfig(String filePath, Boolean disableSyntaxTree) {
         ProjectFiles.validateSingleFileProjectFilePath(filePath);
 
         // Create a PackageManifest instance
@@ -112,7 +112,7 @@ public final class PackageConfigCreator {
                 Collections.emptyMap(), disableSyntaxTree);
     }
 
-    public static PackageConfig createSingleFileProjectConfig(Path filePath) {
+    public static PackageConfig createSingleFileProjectConfig(String filePath) {
         return createSingleFileProjectConfig(filePath, false);
     }
 
