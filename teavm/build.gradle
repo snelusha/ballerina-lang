@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+
+    id 'war'
+    id "org.teavm" version "0.12.3"
+}
+
+group = 'org.ballerinalang'
+version = '2201.13.0-m3'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':ballerina-lang')
+    implementation project(':ballerina-tools-api')
+
+    implementation teavm.libs.jsoApis
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.ballerina.teavm.Main'
+    }
+}
+
+teavm {
+    all {
+        mainClass = 'io.ballerina.teavm.Main'
+    }
+
+    js {
+        addedToWebApp = true
+        targetFileName = 'ballerina.js'
+    }
+
+    wasmGC {
+        addedToWebApp = true
+        targetFileName = 'ballerina.wasm'
+    }
+}

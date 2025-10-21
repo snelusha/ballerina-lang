@@ -109,7 +109,7 @@ public class EnvironmentBuilder {
 
         CompilerContext compilerContext = populateCompilerContext();
         environment.addService(CompilerContext.class, compilerContext);
-        ballerinaDistribution.loadLangLibPackages(compilerContext, packageResolver);
+//        ballerinaDistribution.loadLangLibPackages(compilerContext, packageResolver);
         environment.addService(CompilerPluginCache.class, new CompilerPluginCache());
         return environment;
     }

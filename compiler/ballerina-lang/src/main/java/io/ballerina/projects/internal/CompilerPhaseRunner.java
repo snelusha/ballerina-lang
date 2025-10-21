@@ -145,6 +145,8 @@ public class CompilerPhaseRunner {
         }
 
         birEmit(pkgNode);
+
+        System.exit(0);
     }
 
     public void performLangLibBirGenPhases(BLangPackage pkgNode) {

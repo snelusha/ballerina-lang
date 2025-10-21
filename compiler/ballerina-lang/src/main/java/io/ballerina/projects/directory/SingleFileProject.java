@@ -25,6 +25,8 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.ProjectException;
 import io.ballerina.projects.ProjectKind;
 import io.ballerina.projects.ProjectLoadResult;
+import io.ballerina.projects.environment.EnvironmentBuilder;
+import io.ballerina.projects.environment.ProjectEnvironment;
 import io.ballerina.projects.internal.PackageConfigCreator;
 import io.ballerina.projects.repos.TempDirCompilationCache;
 import io.ballerina.projects.util.ProjectConstants;
@@ -48,6 +50,16 @@ public class SingleFileProject extends Project implements Comparable<Project> {
                 environmentBuilder, projectPath, buildOptions);
         singleFileProject.addPackage(packageConfig);
         return new ProjectLoadResult(singleFileProject, singleFileProject.currentPackage().manifest().diagnostics());
+    }
+
+    public static SingleFileProject load(String path) {
+        Path projectPath = Path.of(path);
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
+        SingleFileProject singleFileProject = new SingleFileProject(
+                ProjectEnvironmentBuilder.getDefaultBuilder(), projectPath, BuildOptions.builder().build()
+        );
+        singleFileProject.addPackage(packageConfig);
+        return singleFileProject;
     }
 
     /**
@@ -81,18 +93,6 @@ public class SingleFileProject extends Project implements Comparable<Project> {
                 environmentBuilder, filePath, buildOptions);
         singleFileProject.addPackage(packageConfig);
         return singleFileProject;
-    }
-
-    /**
-     * @deprecated Use {@link io.ballerina.projects.directory.ProjectLoader#load(Path)}
-     * Loads a single file project from the provided path.
-     *
-     * @param filePath ballerina standalone file path
-     * @return single file project
-     */
-    @Deprecated(forRemoval = true, since = "2201.0.0")
-    public static SingleFileProject load(Path filePath) {
-        return load(filePath, BuildOptions.builder().build());
     }
 
     /**

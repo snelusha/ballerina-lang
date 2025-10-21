@@ -61,9 +61,7 @@ public class BIREmitter {
     }
 
     public BLangPackage emit(BLangPackage bLangPackage) {
-        if (bLangPackage.moduleContextDataHolder.isDumpBir()) {
-            emit(bLangPackage.symbol.bir);
-        }
+        emit(bLangPackage.symbol.bir);
         return bLangPackage;
     }
 

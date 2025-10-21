@@ -40,6 +40,10 @@ public abstract class DocumentData {
         return new DocumentData.LazyDocumentData(name, content);
     }
 
+    public static DocumentData fromHardcoded(String name, String content) {
+        return new DocumentData.EagerDocumentData(name, content);
+    }
+
     public abstract String content();
 
     public String name() {
