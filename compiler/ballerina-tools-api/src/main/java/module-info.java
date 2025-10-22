@@ -1,4 +1,4 @@
-module io.ballerina.tools.api {
+module io.ballerina.tools.api { requires io.ballerina.fs;
     exports io.ballerina.tools.diagnostics;
     exports io.ballerina.tools.text;
 }

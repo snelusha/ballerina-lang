@@ -46,7 +46,7 @@ import org.wso2.ballerinalang.util.Flags;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static org.wso2.ballerinalang.compiler.bir.emit.EmitterUtils.emitFlags;
 import static org.wso2.ballerinalang.compiler.bir.emit.EmitterUtils.emitLBreaks;

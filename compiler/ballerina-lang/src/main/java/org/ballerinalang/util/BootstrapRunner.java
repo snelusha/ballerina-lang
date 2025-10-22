@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 

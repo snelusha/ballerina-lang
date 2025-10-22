@@ -33,7 +33,7 @@ import org.wso2.ballerinalang.util.Flags;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * {@code BIntersectionType} represents an intersection type in Ballerina.

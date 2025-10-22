@@ -26,7 +26,7 @@ import org.wso2.ballerinalang.compiler.tree.BLangNodeTransformer;
 import org.wso2.ballerinalang.compiler.tree.BLangNodeVisitor;
 
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents xml step expression with extensions.

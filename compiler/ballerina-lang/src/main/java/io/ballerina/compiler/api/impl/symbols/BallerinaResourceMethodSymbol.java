@@ -37,7 +37,7 @@ import org.wso2.ballerinalang.compiler.semantics.model.symbols.BResourcePathSegm
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents an implementation of the resource method symbol.

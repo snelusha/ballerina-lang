@@ -173,7 +173,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;

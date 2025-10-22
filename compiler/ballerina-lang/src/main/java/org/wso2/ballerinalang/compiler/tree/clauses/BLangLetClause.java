@@ -28,7 +28,7 @@ import org.wso2.ballerinalang.compiler.tree.types.BLangLetVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Implementation of "let" clause statement.

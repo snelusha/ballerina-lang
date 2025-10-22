@@ -18,7 +18,7 @@
 package io.ballerina.tools.text;
 
 import java.util.Arrays;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents a textual changes on a single {@code TextDocument}.

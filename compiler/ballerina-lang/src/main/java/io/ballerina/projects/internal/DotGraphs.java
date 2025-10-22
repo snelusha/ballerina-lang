@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Contains utilities that serialize {@code DependencyGraph} instances to DOT graph format.

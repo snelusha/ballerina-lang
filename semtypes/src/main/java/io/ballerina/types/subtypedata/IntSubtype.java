@@ -25,7 +25,7 @@ import io.ballerina.types.SubtypeData;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represent IntSubtype.

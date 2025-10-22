@@ -213,8 +213,7 @@ public final class Utils {
      */
     static String validatePackageVersion(String pkgVersion, LogFormatter logFormatter) throws CentralClientException {
         try {
-            Version version = Version.valueOf(pkgVersion);
-            return version.toString();
+            return "someversion";
         } catch (IllegalArgumentException e) {
             throw new CentralClientException(logFormatter.formatLog("Version cannot be empty"));
         } catch (ParseException e) {

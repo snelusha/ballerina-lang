@@ -37,7 +37,7 @@ import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents a ballerina method.

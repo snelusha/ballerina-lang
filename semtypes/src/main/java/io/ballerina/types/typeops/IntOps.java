@@ -17,6 +17,7 @@
  */
 package io.ballerina.types.typeops;
 
+import io.ballerina.fs.TLong;
 import io.ballerina.types.BasicTypeOps;
 import io.ballerina.types.Common;
 import io.ballerina.types.Context;
@@ -165,7 +166,7 @@ public class IntOps implements BasicTypeOps {
                 return RangeUnion.from(1);
             }
         }
-        return RangeUnion.from(new Range(Long.min(r1.min, r2.min), Long.max(r1.max, r2.max)));
+        return RangeUnion.from(new Range(TLong.min(r1.min, r2.min), TLong.max(r1.max, r2.max)));
     }
 
     private Range[] rangeListIntersect(Range[] v1, Range[] v2) {
@@ -206,7 +207,7 @@ public class IntOps implements BasicTypeOps {
         if (r2.max < r1.min) {
             return RangeUnion.from(1);
         }
-        return RangeUnion.from(new Range(Long.max(r1.min, r2.min), Long.min(r1.max, r2.max)));
+        return RangeUnion.from(new Range(TLong.max(r1.min, r2.min), TLong.min(r1.max, r2.max)));
     }
 
     private Range[] rangeListComplement(Range[] v) {

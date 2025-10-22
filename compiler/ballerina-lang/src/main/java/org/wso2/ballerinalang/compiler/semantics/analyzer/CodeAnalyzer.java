@@ -1897,9 +1897,17 @@ public class CodeAnalyzer extends SimpleBLangNodeAnalyzer<CodeAnalyzer.AnalyzerD
     }
 
     private List<BLangExpression> getVarRefs(BLangRecordVarRef varRef) {
-        return Stream.concat(
-                varRef.recordRefFields.stream().map(e -> e.variableReference),
-                Stream.ofNullable(varRef.restParam)).toList();
+        List<BLangExpression> result = new ArrayList<>();
+
+        for (BLangRecordVarRef.BLangRecordVarRefKeyValue field : varRef.recordRefFields) {
+            result.add(field.variableReference);
+        }
+
+        if (varRef.restParam != null) {
+            result.add(varRef.restParam);
+        }
+
+        return result;
     }
 
     private List<BLangExpression> getVarRefs(BLangErrorVarRef varRef) {

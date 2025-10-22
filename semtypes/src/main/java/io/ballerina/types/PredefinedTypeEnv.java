@@ -18,6 +18,8 @@
 
 package io.ballerina.types;
 
+import io.ballerina.fs.TInteger;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -624,7 +626,7 @@ public final class PredefinedTypeEnv {
     }
 
     public int reservedRecAtomCount() {
-        return Integer.max(initializedRecListAtoms.size(), initializedRecMappingAtoms.size());
+        return TInteger.max(initializedRecListAtoms.size(), initializedRecMappingAtoms.size());
     }
 
     private record InitializedTypeAtom<E extends AtomicType>(E atomicType, int index) {

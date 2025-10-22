@@ -39,10 +39,14 @@ teavm {
     js {
         addedToWebApp = true
         targetFileName = 'ballerina.js'
+        sourceMap = true
+        debugInformation = true
     }
 
     wasmGC {
         addedToWebApp = true
         targetFileName = 'ballerina.wasm'
+        sourceMap = true
+        debugInformation = true
     }
 }

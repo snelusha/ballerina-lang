@@ -27,7 +27,7 @@ import org.wso2.ballerinalang.compiler.tree.BLangNodeVisitor;
 import org.wso2.ballerinalang.compiler.tree.types.BLangUserDefinedType;
 
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Implementation of error-constructor-expr.

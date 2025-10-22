@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.compiler.api.symbols.Qualifier.READONLY;
 

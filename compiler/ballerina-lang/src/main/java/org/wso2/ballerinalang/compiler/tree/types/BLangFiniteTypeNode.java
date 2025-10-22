@@ -29,7 +29,7 @@ import org.wso2.ballerinalang.compiler.util.TypeTags;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * {@code BLangFiniteTypeNode} represents a finite type node in Ballerina

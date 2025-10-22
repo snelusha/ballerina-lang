@@ -87,9 +87,124 @@ public final class Utils {
      * @param str the {@code String} to unescape, may be null
      * @return a new unescaped {@code String}, {@code null} if null string input
      */
+    /**
+     * <p>Unescapes any Java literals found in the {@code String}.
+     * For example, it will turn a sequence of {@code '\'} and
+     * {@code 'n'} into a newline character, unless the {@code '\'}
+     * is preceded by another {@code '\'}.</p>
+     *
+     * @param str the {@code String} to unescape, may be null
+     * @return a new unescaped {@code String}, {@code null} if null string input
+     */
     public static String unescapeJava(String str) {
-        return StringEscapeUtils.unescapeJava(str);
+        if (str == null) {
+            return null;
+        }
+
+        StringBuilder result = new StringBuilder(str.length());
+        int length = str.length();
+
+        for (int i = 0; i < length; i++) {
+            char ch = str.charAt(i);
+
+            if (ch == '\\' && i + 1 < length) {
+                char next = str.charAt(i + 1);
+
+                switch (next) {
+                    case 'n':
+                        result.append('\n');
+                        i++;
+                        break;
+                    case 't':
+                        result.append('\t');
+                        i++;
+                        break;
+                    case 'r':
+                        result.append('\r');
+                        i++;
+                        break;
+                    case 'b':
+                        result.append('\b');
+                        i++;
+                        break;
+                    case 'f':
+                        result.append('\f');
+                        i++;
+                        break;
+                    case '\'':
+                        result.append('\'');
+                        i++;
+                        break;
+                    case '\"':
+                        result.append('\"');
+                        i++;
+                        break;
+                    case '\\':
+                        result.append('\\');
+                        i++;
+                        break;
+                    case 'u':
+                        if (i + 5 < length) {
+                            try {
+                                String unicode = str.substring(i + 2, i + 6);
+                                int codePoint = Integer.parseInt(unicode, 16);
+                                result.append((char) codePoint);
+                                i += 5;
+                            } catch (NumberFormatException e) {
+                                // Invalid unicode, keep as is
+                                result.append(ch);
+                            }
+                        } else {
+                            // Not enough characters for unicode escape
+                            result.append(ch);
+                        }
+                        break;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                        // Octal escape: \0-\377
+                        int octalEnd = i + 1;
+                        int maxOctal = Math.min(i + 4, length);
+
+                        // Determine how many octal digits to read (1-3)
+                        while (octalEnd < maxOctal && str.charAt(octalEnd) >= '0' && str.charAt(octalEnd) <= '7') {
+                            octalEnd++;
+                        }
+
+                        try {
+                            String octal = str.substring(i + 1, octalEnd);
+                            int value = Integer.parseInt(octal, 8);
+
+                            // Java octal escapes are limited to \377 (255 in decimal)
+                            if (value <= 255) {
+                                result.append((char) value);
+                                i = octalEnd - 1;
+                            } else {
+                                // Invalid octal value, keep as is
+                                result.append(ch);
+                            }
+                        } catch (NumberFormatException e) {
+                            result.append(ch);
+                        }
+                        break;
+                    default:
+                        // Unknown escape sequence, keep backslash
+                        result.append(ch);
+                        break;
+                }
+            } else {
+                result.append(ch);
+            }
+        }
+
+        return result.toString();
     }
+
 
     private static Identifier encodeGeneratedName(String identifier) {
         StringBuilder sb = new StringBuilder();
@@ -184,10 +299,17 @@ public final class Utils {
     public static String unescapeUnicodeCodepoints(String identifier) {
         Matcher matcher = UNICODE_PATTERN.matcher(identifier);
         StringBuilder buffer = new StringBuilder(identifier.length());
+        int lastEnd = 0;
+
         while (matcher.find()) {
+            // Append text between last match and current match
+            buffer.append(identifier, lastEnd, matcher.start());
+
             String leadingSlashes = matcher.group(1);
             if (isEscapedNumericEscape(leadingSlashes)) {
                 // e.g. \\u{61}, \\\\u{61}
+                buffer.append(matcher.group());
+                lastEnd = matcher.end();
                 continue;
             }
 
@@ -200,15 +322,19 @@ public final class Utils {
                 // 1. unicode code point unescaping (doing separately as [2] does not support code points > 0xFFFF)
                 // 2. java unescaping
                 // Replacing unicode code point of backslash at [1] would compromise [2]. Therefore, special case it.
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(leadingSlashes + "\\u005C"));
+                buffer.append(leadingSlashes).append("\\u005C");
             } else {
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(leadingSlashes + ch));
+                buffer.append(leadingSlashes).append(ch);
             }
-        }
-        matcher.appendTail(buffer);
-        return String.valueOf(buffer);
-    }
 
+            lastEnd = matcher.end();
+        }
+
+        // Append remaining text after last match
+        buffer.append(identifier, lastEnd, identifier.length());
+
+        return buffer.toString();
+    }
     /**
      * Returns whether the <a href="https://ballerina.io/ballerina-spec/spec.html#NumericEscape">NumericEscape</a>
      * is escaped, based on no. of leading backslashes.

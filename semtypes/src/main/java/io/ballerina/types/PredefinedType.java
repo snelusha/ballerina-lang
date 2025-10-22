@@ -21,7 +21,7 @@ import io.ballerina.types.subtypedata.BddNode;
 import io.ballerina.types.subtypedata.IntSubtype;
 import io.ballerina.types.subtypedata.StringSubtype;
 
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.types.BasicTypeCode.BT_CELL;
 import static io.ballerina.types.BasicTypeCode.BT_LIST;
