@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+    <title>Java WASM</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <script
+            type="text/javascript"
+            charset="utf-8"
+            src="wasm-gc/ballerina.wasm-runtime.js"
+    ></script>
+    <script>
+        async function main() {
+            let teavm = await TeaVM.wasmGC.load("wasm-gc/ballerina.wasm", {
+                stackDeobfuscator: {
+                    enabled: true,
+                    infoLocation: "auto",
+                }
+            );
+            teavm.exports.main([]);
+        }
+    </script>
+</head>
+<body onload="main()"></body>
+</html>
