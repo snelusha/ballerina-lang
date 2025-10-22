@@ -184,10 +184,17 @@ public final class Utils {
     public static String unescapeUnicodeCodepoints(String identifier) {
         Matcher matcher = UNICODE_PATTERN.matcher(identifier);
         StringBuilder buffer = new StringBuilder(identifier.length());
+        int lastEnd = 0;
+
         while (matcher.find()) {
+            // Append text between last match and current match
+            buffer.append(identifier, lastEnd, matcher.start());
+
             String leadingSlashes = matcher.group(1);
             if (isEscapedNumericEscape(leadingSlashes)) {
                 // e.g. \\u{61}, \\\\u{61}
+                buffer.append(matcher.group());
+                lastEnd = matcher.end();
                 continue;
             }
 
@@ -200,13 +207,18 @@ public final class Utils {
                 // 1. unicode code point unescaping (doing separately as [2] does not support code points > 0xFFFF)
                 // 2. java unescaping
                 // Replacing unicode code point of backslash at [1] would compromise [2]. Therefore, special case it.
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(leadingSlashes + "\\u005C"));
+                buffer.append(leadingSlashes).append("\\u005C");
             } else {
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(leadingSlashes + ch));
+                buffer.append(leadingSlashes).append(ch);
             }
+
+            lastEnd = matcher.end();
         }
-        matcher.appendTail(buffer);
-        return String.valueOf(buffer);
+
+        // Append remaining text after last match
+        buffer.append(identifier, lastEnd, identifier.length());
+
+        return buffer.toString();
     }
 
     /**
