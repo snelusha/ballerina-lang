@@ -34,7 +34,7 @@ import io.ballerina.tools.text.LinePosition;
 import io.ballerina.tools.text.LineRange;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.List;
 

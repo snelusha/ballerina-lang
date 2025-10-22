@@ -25,7 +25,7 @@ import io.ballerina.projects.util.ProjectConstants;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 
 import static io.ballerina.projects.util.ProjectConstants.CACHES_DIR_NAME;
@@ -52,13 +52,6 @@ public class BuildProjectCompilationCache extends FileSystemCache {
     public byte[] getBir(ModuleName moduleName) {
         Path birFilePath = getBirPath().resolve(moduleName.toString()
                 + ProjectConstants.BLANG_COMPILED_PKG_BIR_EXT);
-        if (Files.exists(birFilePath)) {
-            try {
-                return FileUtils.readFileToByteArray(birFilePath.toFile());
-            } catch (IOException e) {
-                return EMPTY_BYTE_ARRAY;
-            }
-        }
         return new byte[0];
     }
 

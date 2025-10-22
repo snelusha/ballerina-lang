@@ -28,12 +28,12 @@ import org.wso2.ballerinalang.compiler.util.Name;
 import org.wso2.ballerinalang.compiler.util.Names;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
+import io.ballerina.fs.FileVisitResult;
+import io.ballerina.fs.Files;
+import io.ballerina.fs.LinkOption;
 import io.ballerina.fs.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+import io.ballerina.fs.SimpleFileVisitor;
+import io.ballerina.fs.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -129,35 +129,6 @@ public class GeneralFSPackageRepository implements PackageRepository {
         Set<PackageID> result = new LinkedHashSet<>();
         int baseNameCount = this.basePath.getNameCount();
         String separator = this.basePath.getFileSystem().getSeparator();
-        try {
-            Files.walkFileTree(this.basePath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    if (Files.isHidden(dir)) {
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-                    List<Name> nameComps = new ArrayList<>();
-                    boolean balFilesExist;
-                    try (Stream<Path> paths = Files.list(dir)) {
-                        balFilesExist = paths.filter(f -> isBALFile(f)).count() > 0;
-                    }
-                    if (balFilesExist) {
-                        int dirNameCount = dir.getNameCount();
-                        if (dirNameCount > baseNameCount) {
-                            dir.subpath(baseNameCount, dirNameCount).forEach(
-                                    f -> nameComps.add(new Name(sanitize(f.getFileName().toString(), separator))));
-                            result.add(new PackageID(Names.ANON_ORG, nameComps, Names.DEFAULT_VERSION));
-                        }
-                    }
-                    if ((dir.getNameCount() + 1) - baseNameCount > maxDepth) {
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            throw new RuntimeException("Error in listing modules: " + e.getMessage(), e);
-        }
         return result;
     }
 

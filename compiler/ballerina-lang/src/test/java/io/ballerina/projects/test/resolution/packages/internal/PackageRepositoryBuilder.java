@@ -27,7 +27,7 @@ import io.ballerina.projects.internal.PackageVersionContainer;
 import io.ballerina.projects.internal.repositories.AbstractPackageRepository;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.HashMap;
 import java.util.List;

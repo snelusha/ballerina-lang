@@ -52,7 +52,7 @@ import org.wso2.ballerinalang.util.RepoUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Paths;
+import io.ballerina.fs.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

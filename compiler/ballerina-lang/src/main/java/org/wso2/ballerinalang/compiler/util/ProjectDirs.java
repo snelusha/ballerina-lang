@@ -22,12 +22,12 @@ import org.ballerinalang.model.elements.PackageID;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
+import io.ballerina.fs.AccessDeniedException;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
+import io.ballerina.fs.LinkOption;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
+import io.ballerina.fs.PathMatcher;
 import java.util.stream.Stream;
 
 import static org.wso2.ballerinalang.compiler.util.ProjectDirConstants.BLANG_SOURCE_EXT;
@@ -82,23 +82,7 @@ public final class ProjectDirs {
      * @return true if source files exists else false
      */
     public static boolean containsSourceFiles(Path pkgPath) throws BLangCompilerException {
-        try (Stream<Path> paths = Files.find(pkgPath, Integer.MAX_VALUE, (path, attrs) ->
-                            path.toString().endsWith(ProjectDirConstants.BLANG_SOURCE_EXT))) {
-            return paths.findAny().isPresent();
-        } catch (IOException ignored) {
-            // Here we are trying to check if there are source files inside the package to be compiled. If an error
-            // occurs when trying to visit the files inside the package then we simply return false.
-            return false;
-        } catch (UncheckedIOException e) {
-            // Files#find returns an UncheckedIOException instead of an AccessDeniedException when there is a file to
-            // which user doesn't have required permission.
-            if (e.getCause() instanceof AccessDeniedException) {
-                throw new BLangCompilerException("permission denied for path " + pkgPath.toString()
-                        + ", cause: " + e.getMessage());
-            } else {
-                throw e;
-            }
-        }
+      throw new RuntimeException();
     }
 
     /**

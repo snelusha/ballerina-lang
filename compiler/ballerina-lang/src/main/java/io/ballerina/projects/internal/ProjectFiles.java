@@ -33,11 +33,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+import io.ballerina.fs.FileSystem;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
+import io.ballerina.fs.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,10 +59,6 @@ import static io.ballerina.projects.util.ProjectUtils.checkReadPermission;
  */
 public final class ProjectFiles {
 
-    public static final PathMatcher BAL_EXTENSION_MATCHER =
-            FileSystems.getDefault().getPathMatcher("glob:**.bal");
-    public static final PathMatcher BALA_EXTENSION_MATCHER =
-            FileSystems.getDefault().getPathMatcher("glob:**.bala");
     private static final PrintStream outStream = System.out;
 
     private ProjectFiles() {
@@ -284,7 +280,6 @@ public final class ProjectFiles {
         }
         try (Stream<Path> pathStream = Files.walk(dirPath, 1)) {
             return pathStream
-                    .filter(BAL_EXTENSION_MATCHER::matches)
                     .filter(Files::isRegularFile)
                     .map(ProjectFiles::loadDocument)
                     .collect(Collectors.toList());
@@ -301,7 +296,6 @@ public final class ProjectFiles {
         }
         try (Stream<Path> pathStream = Files.walk(dirPath, 1)) {
             return pathStream
-                    .filter(BAL_EXTENSION_MATCHER::matches)
                     .map(ProjectFiles::loadTestDocument)
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -394,13 +388,12 @@ public final class ProjectFiles {
         checkReadPermission(projectDirPath);
     }
 
-    public static void validateSingleFileProjectFilePath(String path) {
-        Path filePath = Path.of(path);
+    public static void validateSingleFileProjectFilePath(Path filePath) {
         if (Files.notExists(filePath)) {
             throw new ProjectException("The file does not exist: " + filePath);
         }
 
-        if (!Files.isRegularFile(filePath) || !ProjectFiles.BAL_EXTENSION_MATCHER.matches(filePath)) {
+        if (!Files.isRegularFile(filePath)) {
             throw new ProjectException("Invalid Ballerina source file(.bal): " + filePath);
         }
 
@@ -454,6 +447,6 @@ public final class ProjectFiles {
     }
 
     private static boolean isValidBalaFile(Path balaPath) {
-        return Files.isRegularFile(balaPath) && ProjectFiles.BALA_EXTENSION_MATCHER.matches(balaPath);
+        return Files.isRegularFile(balaPath);
     }
 }

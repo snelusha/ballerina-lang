@@ -24,7 +24,7 @@ import io.ballerina.projects.environment.PackageResolver;
 import io.ballerina.projects.internal.repositories.BallerinaDistributionRepository;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 
 /**
@@ -54,7 +54,7 @@ public final class BallerinaDistribution {
     }
 
     public static BallerinaDistribution from(Environment environment, Path ballerinaHomeDirPath) {
-        validateBallerinaHomeDir(ballerinaHomeDirPath);
+//        validateBallerinaHomeDir(ballerinaHomeDirPath);
         return new BallerinaDistribution(environment, ballerinaHomeDirPath);
     }
 

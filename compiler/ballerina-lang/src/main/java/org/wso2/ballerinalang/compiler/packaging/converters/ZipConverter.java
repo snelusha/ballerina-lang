@@ -28,9 +28,9 @@ import org.wso2.ballerinalang.util.RepoUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+import io.ballerina.fs.FileSystemAlreadyExistsException;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,14 +73,14 @@ public class ZipConverter extends PathConverter {
                     pathToZip.getPath() + "!/",
                     pathToZip.getQuery(), pathToZip.getFragment());
             initFS(pathInZip);
-            return Path.of(pathInZip);
+            return Path.of(pathInZip.toString());
         } catch (URISyntaxException ignore) {
             // This exception occurs when trying to read the bala which is inside the package zip. An exception can
             // occur when creating the URI needed to create the zip file system provider which will be used to read the
             // content inside the zip/jar file. So if such an error occurs, we just return the path to the zip/jar file
             // instead of throwing the exception.
         }
-        return Path.of(pathToZip);
+        return Path.of(pathToZip.toString());
     }
 
     @SuppressWarnings("resource")

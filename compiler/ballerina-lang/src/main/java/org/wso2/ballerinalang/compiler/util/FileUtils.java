@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+import io.ballerina.fs.FileSystem;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.StandardCopyOption;
+import io.ballerina.fs.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -134,13 +134,6 @@ public final class FileUtils {
             Path dest = zipFS.getPath(SRC_DIR, fileName);
             if (fileName.equals("Module.md")) {
                 dest = zipFS.getPath(zipFS.getSeparator(), fileName);
-            }
-            try {
-                if (Files.exists(path)) {
-                    copyFileToArchive(new FileInputStream(path.toFile()), dest);
-                }
-            } catch (IOException e) {
-                throw new BLangCompilerException("error generating artifact: " + outDirPath.getFileName());
             }
         });
     }

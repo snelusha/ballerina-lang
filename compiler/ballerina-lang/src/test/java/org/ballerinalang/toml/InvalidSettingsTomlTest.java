@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.Objects;

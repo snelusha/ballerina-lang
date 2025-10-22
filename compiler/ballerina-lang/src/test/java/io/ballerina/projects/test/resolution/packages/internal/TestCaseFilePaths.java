@@ -17,7 +17,7 @@
  */
 package io.ballerina.projects.test.resolution.packages.internal;
 
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Optional;
 

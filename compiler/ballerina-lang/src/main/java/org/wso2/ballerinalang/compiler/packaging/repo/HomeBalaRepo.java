@@ -29,9 +29,9 @@ import org.wso2.ballerinalang.compiler.util.ProjectDirConstants;
 import org.wso2.ballerinalang.util.RepoUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
+import io.ballerina.fs.PathMatcher;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;

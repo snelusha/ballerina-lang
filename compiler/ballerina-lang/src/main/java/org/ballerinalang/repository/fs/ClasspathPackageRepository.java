@@ -17,15 +17,14 @@
 */
 package org.ballerinalang.repository.fs;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.wso2.ballerinalang.compiler.util.Name;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystems;
+import io.ballerina.fs.FileSystemAlreadyExistsException;
+import io.ballerina.fs.FileSystems;
 import io.ballerina.fs.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +49,7 @@ public class ClasspathPackageRepository extends GeneralFSPackageRepository {
             URI classURI = providerClassRef.getProtectionDomain().getCodeSource().getLocation().toURI();
             String classPath = classURI.getPath();
             // TODO Fix this properly for other platforms too
-            if (SystemUtils.IS_OS_WINDOWS) {
-                classPath = classPath.replace(" ", "%20");
-            }
+
             URI pathUri;
             String basePath = JAR_SOURCE_LOCATION + orgName;
             if (classPath.endsWith(".jar")) {
@@ -64,7 +61,7 @@ public class ClasspathPackageRepository extends GeneralFSPackageRepository {
                 pathUri = URI.create("file:" + classPath + basePath);
             }
             initFS(pathUri);
-            return Path.of(pathUri);
+            return Path.of(pathUri.toString());
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }

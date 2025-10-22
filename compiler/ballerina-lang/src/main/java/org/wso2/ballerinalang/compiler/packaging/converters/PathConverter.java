@@ -30,10 +30,10 @@ import org.wso2.ballerinalang.util.RepoUtils;
 import org.wso2.ballerinalang.util.TomlParserUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.attribute.BasicFileAttributes;
+import io.ballerina.fs.PathMatcher;
+import io.ballerina.fs.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -105,12 +105,6 @@ public class PathConverter implements Converter<Path> {
 
     @Override
     public Stream<Path> expandBalWithTest(Path path) {
-        if (Files.isDirectory(path)) {
-            try (Stream<Path> paths = Files.find(path, Integer.MAX_VALUE, this::isBalWithTest)) {
-                return paths.sorted();
-            } catch (IOException ignore) {
-            }
-        }
         return Stream.of();
     }
 

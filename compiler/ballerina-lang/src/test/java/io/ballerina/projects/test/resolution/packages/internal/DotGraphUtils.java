@@ -31,7 +31,7 @@ import io.ballerina.projects.internal.ResolutionEngine.DependencyNode;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.HashMap;
 import java.util.HashSet;

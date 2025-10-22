@@ -30,7 +30,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Optional;
 
@@ -64,31 +64,12 @@ public class FileSystemCache extends CompilationCache {
     public byte[] getBir(ModuleName moduleName) {
         Path birFilePath = getBirPath().resolve(moduleName.toString()
                 + ProjectConstants.BLANG_COMPILED_PKG_BIR_EXT);
-        if (Files.exists(birFilePath)) {
-            try {
-                return FileUtils.readFileToByteArray(birFilePath.toFile());
-            } catch (IOException e) {
-                // TODO proper error handling
-                throw new RuntimeException("Failed to read the cached bir of module: " + moduleName, e);
-            }
-        }
         return new byte[0];
     }
 
     @Override
     public void cacheBir(ModuleName moduleName, ByteArrayOutputStream birContent) {
         Path birFilePath = getBirPath().resolve(moduleName.toString() + ProjectConstants.BLANG_COMPILED_PKG_BIR_EXT);
-        if (!Files.exists(birFilePath)) {
-            try {
-                File tempBirFile = birPath.resolve(".tmp").toFile();
-                // TODO Can we improve this logic
-                FileUtils.writeByteArrayToFile(tempBirFile, birContent.toByteArray());
-                FileUtils.moveFile(tempBirFile, birFilePath.toFile());
-            } catch (IOException e) {
-                // TODO proper error handling
-                throw new RuntimeException("Failed to cache the bir of module: " + moduleName, e);
-            }
-        }
     }
 
     @Override
@@ -110,12 +91,6 @@ public class FileSystemCache extends CompilationCache {
         Path jarFilePath = targetPlatformCacheDirPath.resolve(libraryFileName);
 
         // TODO Can we improve this logic
-        try {
-            FileUtils.writeByteArrayToFile(jarFilePath.toFile(), libraryContent.toByteArray());
-        } catch (IOException e) {
-            // TODO improve the error handling
-            throw new RuntimeException("Failed to write library: " + jarFilePath, e);
-        }
     }
 
     /**

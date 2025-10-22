@@ -208,6 +208,88 @@ class TPath implements io.ballerina.fs.Path {
     public String readString() {
         throw new RuntimeException("Path operations not supported in web environment");
     }
+    
+    @Override
+    public java.io.File toJavaFile() {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public java.net.URI toUri() {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public java.nio.file.Path toNioPath() {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public FileSystem getFileSystem() {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public int getNameCount() {
+        String[] parts = path.split("/");
+        return (int) java.util.Arrays.stream(parts).filter(s -> !s.isEmpty()).count();
+    }
+    
+    @Override
+    public Path getName(int index) {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public Path subpath(int beginIndex, int endIndex) {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public boolean startsWith(Path other) {
+        if (other instanceof TPath tPath) {
+            return path.startsWith(tPath.path);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean startsWith(String other) {
+        return path.startsWith(other);
+    }
+    
+    @Override
+    public boolean endsWith(Path other) {
+        if (other instanceof TPath tPath) {
+            return path.endsWith(tPath.path);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean endsWith(String other) {
+        return path.endsWith(other);
+    }
+    
+    @Override
+    public Path relativize(Path other) {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public Path resolveSibling(Path other) {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public Path resolveSibling(String other) {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
+    
+    @Override
+    public Path toRealPath(LinkOption... options) throws java.io.IOException {
+        throw new RuntimeException("Path operations not supported in web environment");
+    }
 
     @Override
     public int compareTo(io.ballerina.fs.Path o) {
@@ -220,22 +302,5 @@ class TPath implements io.ballerina.fs.Path {
     @Override
     public String toString() {
         return path;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        TPath tPath = (TPath) obj;
-        return path.equals(tPath.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return path.hashCode();
     }
 }

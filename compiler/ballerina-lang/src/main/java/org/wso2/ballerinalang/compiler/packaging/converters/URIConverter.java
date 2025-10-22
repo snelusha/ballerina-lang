@@ -31,7 +31,7 @@ import org.wso2.ballerinalang.util.TomlParserUtils;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Map;
 import java.util.stream.Stream;

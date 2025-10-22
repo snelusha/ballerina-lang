@@ -56,9 +56,9 @@ import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.Paths;
+import io.ballerina.fs.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

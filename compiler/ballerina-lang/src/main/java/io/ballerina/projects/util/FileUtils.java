@@ -29,14 +29,14 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.FileVisitResult;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
+import io.ballerina.fs.PathMatcher;
+import io.ballerina.fs.SimpleFileVisitor;
+import io.ballerina.fs.StandardCopyOption;
+import io.ballerina.fs.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -199,36 +199,7 @@ public final class FileUtils {
      * @return last modified time of the ballerina project
      */
     public static long lastModifiedTimeOfBalProject(Path projectRoot) {
-        File[] files = projectRoot.toAbsolutePath().toFile().listFiles();
-        long latestDate = 0;
-        if (files != null) {
-            for (File file : files) {
-                long fileModifiedDate = latestDate;
-                Path filename = Optional.of(Optional.of(file.toPath()).orElseThrow()).orElseThrow();
-                if (file.isDirectory()) {
-                    if (file.toPath().equals(projectRoot.resolve(MODULES_ROOT))
-                            || file.toPath().equals(projectRoot.resolve(TEST_DIR_NAME))
-                            || file.toPath().equals(projectRoot.resolve(RESOURCE_DIR_NAME))) {
-                        // for `modules`, `tests` and `resources` directories, not considering files inside
-                        fileModifiedDate = file.lastModified();
-                    }
-                } else {
-                    if (file.toPath().equals(projectRoot.resolve(BALLERINA_TOML))
-                            || file.toPath().equals(projectRoot.resolve(COMPILER_PLUGIN_TOML))) {
-                        // Ballerina.toml and CompilerPlugin.toml
-                        fileModifiedDate = file.lastModified();
-                    } else if (filename.toString().endsWith(BLANG_SOURCE_EXT)
-                            && file.toPath().equals(projectRoot.resolve(filename))) {
-                        // default module ballerina source files
-                        fileModifiedDate = file.lastModified();
-                    }
-                }
-                if (fileModifiedDate > latestDate) {
-                    latestDate = fileModifiedDate;
-                }
-            }
-        }
-        return latestDate;
+        throw new RuntimeException();
     }
 
     /**

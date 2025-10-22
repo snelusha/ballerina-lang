@@ -22,7 +22,7 @@ import io.ballerina.projects.Project;
 import io.ballerina.projects.util.ProjectConstants;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 
 /**
@@ -50,10 +50,6 @@ public class TempDirCompilationCache extends FileSystemCache {
     }
 
     private static Path createTempProjectRoot() {
-        try {
-            return Files.createTempDirectory("ballerina-compilation-cache" + System.nanoTime());
-        } catch (IOException e) {
-            throw new RuntimeException("Error while creating a temp directory.", e);
-        }
+        return Path.of("non-existing");
     }
 }

@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation project(':ballerina-lang')
     implementation project(':ballerina-tools-api')
+    implementation project(':fs')
 
     implementation teavm.libs.jsoApis
 }

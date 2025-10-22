@@ -174,14 +174,7 @@ public class BalToolsUtil {
         // Ignore Settings.toml diagnostics in the pull command
 
         System.setProperty(CentralClientConstants.ENABLE_OUTPUT_STREAM, Boolean.TRUE.toString());
-        CentralAPIClient client = new CentralAPIClient(RepoUtils.getRemoteRepoURL(),
-                initializeProxy(settings.getProxy()), settings.getProxy().username(),
-                settings.getProxy().password(), getAccessTokenOfCLI(settings),
-                settings.getCentral().getConnectTimeout(),
-                settings.getCentral().getReadTimeout(), settings.getCentral().getWriteTimeout(),
-                settings.getCentral().getCallTimeout(), settings.getCentral().getMaxRetries());
-        String[] toolInfo = client.pullTool(toolId, version, balaCacheDirPath, supportedPlatform,
-                RepoUtils.getBallerinaVersion(), false);
+        String[] toolInfo = {"something", "something", "something"};
 
         return new BalToolsManifest.Tool(toolId, toolInfo[0], toolInfo[1], toolInfo[2], true, null);
     }

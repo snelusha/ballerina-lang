@@ -36,7 +36,7 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Collection;
 

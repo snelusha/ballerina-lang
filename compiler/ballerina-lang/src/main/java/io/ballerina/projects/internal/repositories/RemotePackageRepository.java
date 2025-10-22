@@ -30,7 +30,7 @@ import org.wso2.ballerinalang.util.RepoUtils;
 
 import java.io.PrintStream;
 import java.net.Proxy;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,9 +67,9 @@ public class RemotePackageRepository implements PackageRepository {
 
     public static RemotePackageRepository from(Environment environment, Path cacheDirectory, String repoUrl,
                                                Settings settings) {
-        if (Files.notExists(cacheDirectory)) {
-            throw new ProjectException("cache directory does not exists: " + cacheDirectory);
-        }
+//        if (Files.notExists(cacheDirectory)) {
+//            throw new ProjectException("cache directory does not exists: " + cacheDirectory);
+//        }
         String ballerinaShortVersion = RepoUtils.getBallerinaShortVersion();
         FileSystemRepository fileSystemRepository = new FileSystemRepository(
                 environment, cacheDirectory, ballerinaShortVersion);
@@ -110,19 +110,6 @@ public class RemotePackageRepository implements PackageRepository {
             String supportedPlatform = Arrays.stream(JvmTarget.values())
                     .map(JvmTarget::code)
                     .collect(Collectors.joining(","));
-            try {
-                this.client.pullPackage(orgName, packageName, version, packagePathInBalaCache, supportedPlatform,
-                        RepoUtils.getBallerinaVersion(), true);
-            } catch (CentralClientException e) {
-                boolean enableOutputStream =
-                        Boolean.parseBoolean(System.getProperty(CentralClientConstants.ENABLE_OUTPUT_STREAM));
-                if (enableOutputStream) {
-                    final PrintStream out = System.out;
-                    out.println("Error while pulling package [" + orgName + "/" + packageName + ":" + version +
-                            "]: " + e.getMessage());
-
-                }
-            }
         }
 
         return this.fileSystemRepo.getPackage(request, options);

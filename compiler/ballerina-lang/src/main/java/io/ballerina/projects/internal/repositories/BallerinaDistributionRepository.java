@@ -21,7 +21,7 @@ import io.ballerina.projects.ProjectException;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.util.ProjectConstants;
 
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 
 /**
@@ -37,10 +37,10 @@ public class BallerinaDistributionRepository extends FileSystemRepository {
 
     public static BallerinaDistributionRepository from(Environment environment, Path distributionPath) {
         Path distributionRepoPath = distributionPath.resolve(ProjectConstants.DIST_CACHE_DIRECTORY);
-        if (Files.notExists(distributionPath)) {
-            throw new ProjectException("Ballerina distribution repository does not exists: " +
-                    distributionRepoPath);
-        }
+//        if (Files.notExists(distributionPath)) {
+//            throw new ProjectException("Ballerina distribution repository does not exists: " +
+//                    distributionRepoPath);
+//        }
         return new BallerinaDistributionRepository(environment, distributionRepoPath);
     }
 }

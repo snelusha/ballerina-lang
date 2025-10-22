@@ -28,10 +28,10 @@ import io.ballerina.toml.semantic.ast.TomlValueNode;
 import io.ballerina.toml.semantic.ast.TopLevelNode;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.PathMatcher;
+import io.ballerina.fs.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

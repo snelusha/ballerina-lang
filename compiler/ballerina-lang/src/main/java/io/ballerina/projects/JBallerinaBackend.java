@@ -53,7 +53,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -573,58 +573,6 @@ public class JBallerinaBackend extends CompilerBackend {
         if (Thread.currentThread().isInterrupted()) {
             return;
         }
-        try (ZipFile zipFile = new ZipFile(jarLibrary.path().toFile())) {
-            ZipArchiveEntryPredicate predicate = entry -> {
-                String entryName = entry.getName();
-                if (entryName.equals("META-INF/MANIFEST.MF")) {
-                    return false;
-                }
-                if (entryName.equals("module-info.class")) {
-                    return false;
-                }
-                if (entryName.startsWith("META-INF/services")) {
-                    StringBuilder s = services.get(entryName);
-                    if (s == null) {
-                        s = new StringBuilder();
-                        services.put(entryName, s);
-                    }
-                    char c = '\n';
-
-                    int len;
-                    try (BufferedInputStream inStream = new BufferedInputStream(zipFile.getInputStream(entry))) {
-                        while ((len = inStream.read()) != -1) {
-                            c = (char) len;
-                            s.append(c);
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (c != '\n') {
-                        s.append('\n');
-                    }
-
-                    // Its not required to copy SPI entries in here as we'll be adding merged SPI related entries
-                    // separately. Therefore the predicate should be set as false.
-                    return false;
-                }
-
-                // Skip already copied files or excluded extensions.
-                if (isCopiedEntry(entryName, copiedEntries)) {
-                    addConflictedJars(jarLibrary, copiedEntries, entryName);
-                    return false;
-                }
-                if (isExcludedEntry(entryName)) {
-                    return false;
-                }
-                // SPIs will be merged first and then put into jar separately.
-                copiedEntries.put(entryName, jarLibrary);
-                return true;
-            };
-
-            // Transfers selected entries from this zip file to the output stream, while preserving its compression and
-            // all the other original attributes.
-            zipFile.copyRawEntries(outStream, predicate);
-        }
     }
 
     private static boolean isCopiedEntry(String entryName, HashMap<String, JarLibrary> copiedEntries) {
@@ -695,11 +643,6 @@ public class JBallerinaBackend extends CompilerBackend {
         nativeImageCommand += File.separator + BIN_DIR_NAME + File.separator
                 + (OS.contains("win") ? "native-image.cmd" : "native-image");
 
-        File commandExecutable = Path.of(nativeImageCommand).toFile();
-        if (!commandExecutable.exists()) {
-            throw new ProjectException("cannot find '" + commandExecutable.getName() + "' in the GRAALVM_HOME/bin " +
-                    "directory. Install it using: gu install native-image");
-        }
 
         String graalVMBuildOptions = project.buildOptions().graalVMBuildOptions();
         List<String> nativeArgs = new ArrayList<>();

@@ -41,7 +41,7 @@ import org.wso2.ballerinalang.util.RepoUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -170,27 +170,6 @@ public class MavenPackageRepository extends AbstractPackageRepository {
     public boolean getPackageFromRemoteRepo(String org,
                                             String name,
                                             String version) {
-        try {
-            Path tmpDownloadDirectory = Files.createTempDirectory("ballerina-" + System.nanoTime());
-            client.pullPackage(org, name, version,
-                    String.valueOf(tmpDownloadDirectory.toAbsolutePath()));
-            Path balaDownloadPath = tmpDownloadDirectory.resolve(org).resolve(name).resolve(version)
-                    .resolve(name + "-" + version + BALA_EXTENSION);
-            Path temporaryExtractionPath = tmpDownloadDirectory.resolve(org).resolve(name)
-                    .resolve(version).resolve(PLATFORM);
-            ProjectUtils.extractBala(balaDownloadPath, temporaryExtractionPath);
-            Path packageJsonPath = temporaryExtractionPath.resolve("package.json");
-            try (BufferedReader bufferedReader = Files.newBufferedReader(packageJsonPath, StandardCharsets.UTF_8)) {
-                JsonObject resultObj = new Gson().fromJson(bufferedReader, JsonObject.class);
-                String platform = resultObj.get(PLATFORM).getAsString();
-                Path actualBalaPath = Path.of(this.repoLocation).resolve(org).resolve(name)
-                        .resolve(version).resolve(platform);
-                FileUtils.copyDirectory(temporaryExtractionPath.toFile(),
-                        actualBalaPath.toFile());
-            }
-        } catch (IOException | MavenResolverClientException e) {
-            return false;
-        }
         return true;
     }
 }

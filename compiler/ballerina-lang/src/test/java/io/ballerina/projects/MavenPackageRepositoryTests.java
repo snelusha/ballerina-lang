@@ -26,12 +26,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
+import io.ballerina.fs.FileVisitResult;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
+import io.ballerina.fs.SimpleFileVisitor;
+import io.ballerina.fs.StandardCopyOption;
+import io.ballerina.fs.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;

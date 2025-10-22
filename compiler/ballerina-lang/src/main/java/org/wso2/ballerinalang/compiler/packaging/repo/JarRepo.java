@@ -16,7 +16,7 @@ public class JarRepo implements Repo<Path> {
     private final ZipConverter converter;
 
     public JarRepo(URI jarLocation) {
-        this.converter = new ZipConverter(Path.of(jarLocation));
+        this.converter = new ZipConverter(Path.of(jarLocation.toString()));
     }
 
     @Override

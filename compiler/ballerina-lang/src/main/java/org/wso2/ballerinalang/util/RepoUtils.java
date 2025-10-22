@@ -30,8 +30,8 @@ import org.wso2.ballerinalang.compiler.util.ProjectDirs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
+import io.ballerina.fs.Files;
+import io.ballerina.fs.LinkOption;
 import io.ballerina.fs.Path;
 import java.util.Enumeration;
 import java.util.Map;

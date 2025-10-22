@@ -74,10 +74,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
+import io.ballerina.fs.DirectoryStream;
+import io.ballerina.fs.FileSystems;
+import io.ballerina.fs.Files;
+import io.ballerina.fs.LinkOption;
 import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -591,16 +591,6 @@ public final class ProjectUtils {
         return dependencies;
     }
 
-    public static Path generateObservabilitySymbolsJar(String packageName) throws IOException {
-        Path jarPath = Files.createTempFile(packageName + "-", "-observability-symbols.jar");
-        Manifest manifest = new Manifest();
-        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        JarOutputStream jarOutputStream = new JarOutputStream(new BufferedOutputStream(
-                new FileOutputStream(jarPath.toFile())), manifest);
-        jarOutputStream.close();
-        return jarPath;
-    }
-
     /**
      * Copies a given jar file into the executable fat jar.
      *
@@ -1028,13 +1018,6 @@ public final class ProjectUtils {
                     // Create all non-existing directories.
                     Files.createDirectories(Optional.of(outputPath.getParent()).get());
                     // Create a new file output stream.
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
-                        // Write the content from zip input stream to the file output stream.
-                        int len;
-                        while ((len = zipInputStream.read(buffer)) > 0) {
-                            fileOutputStream.write(buffer, 0, len);
-                        }
-                    }
                     // Continue with the next entry.
                     zipEntry = zipInputStream.getNextEntry();
                 }
@@ -1053,14 +1036,6 @@ public final class ProjectUtils {
         File directory = new File(String.valueOf(directoryPath));
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    boolean success = deleteDirectory(f.toPath());
-                    if (!success) {
-                        return false;
-                    }
-                }
-            }
         }
         return directory.delete();
     }
@@ -1078,17 +1053,6 @@ public final class ProjectUtils {
         File directory = new File(String.valueOf(directoryPath));
         File[] files = directory.listFiles();
         boolean success = true;
-        if (files != null) {
-            for (File f : files) {
-                if (!filesToKeep.contains(f.toPath()) && f.isDirectory()) {
-                    success = deleteDirectory(f.toPath());
-                } else if (!filesToKeep.contains(f.toPath()) && f.isFile()) {
-                    success = f.delete();
-                }
-
-            }
-            return success;
-        }
         return true;
     }
 
@@ -1165,11 +1129,6 @@ public final class ProjectUtils {
         }
 
         // write build file
-        try {
-            Files.write(buildFilePath, Collections.singleton(gson.toJson(buildJson)));
-        } catch (IOException e) {
-            throw new ProjectException("Failed to write to the '" + BUILD_FILE + "' file");
-        }
     }
 
     /**

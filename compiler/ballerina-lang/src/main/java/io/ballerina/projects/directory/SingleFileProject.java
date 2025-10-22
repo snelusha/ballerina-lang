@@ -32,7 +32,7 @@ import io.ballerina.projects.repos.TempDirCompilationCache;
 import io.ballerina.projects.util.ProjectConstants;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.Optional;
 
@@ -45,9 +45,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
 
     static ProjectLoadResult loadProject(Path projectPath, ProjectEnvironmentBuilder environmentBuilder,
                                          BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath.toString());
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
         SingleFileProject singleFileProject = new SingleFileProject(
-                environmentBuilder, projectPath.toString(), buildOptions);
+                environmentBuilder, projectPath, buildOptions);
         singleFileProject.addPackage(packageConfig);
         return new ProjectLoadResult(singleFileProject, singleFileProject.currentPackage().manifest().diagnostics());
     }
@@ -87,9 +87,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     @Deprecated(forRemoval = true, since = "2201.0.0")
     public static SingleFileProject load(ProjectEnvironmentBuilder environmentBuilder, Path filePath,
                                          BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath.toString());
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath);
         SingleFileProject singleFileProject = new SingleFileProject(
-                environmentBuilder, filePath.toString(), buildOptions);
+                environmentBuilder, filePath, buildOptions);
         singleFileProject.addPackage(packageConfig);
         return singleFileProject;
     }
@@ -104,10 +104,10 @@ public class SingleFileProject extends Project implements Comparable<Project> {
      */
     @Deprecated(forRemoval = true, since = "2201.0.0")
     public static SingleFileProject load(Path filePath, BuildOptions buildOptions) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath.toString(),
+        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath,
                 buildOptions.disableSyntaxTree());
         ProjectEnvironmentBuilder environmentBuilder = ProjectEnvironmentBuilder.getDefaultBuilder();
-        SingleFileProject singleFileProject = new SingleFileProject(environmentBuilder, filePath.toString(), buildOptions);
+        SingleFileProject singleFileProject = new SingleFileProject(environmentBuilder, filePath, buildOptions);
         singleFileProject.addPackage(packageConfig);
         return singleFileProject;
     }
@@ -115,11 +115,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, Path filePath, BuildOptions buildOptions) {
         super(ProjectKind.SINGLE_FILE_PROJECT, filePath, environmentBuilder, buildOptions, null);
 
-        try {
-            this.targetDir = Files.createTempDirectory("ballerina-cache" + System.nanoTime());
-        } catch (IOException e) {
-            // ignore
-        }
+        targetDir = null;
 
         populateCompilerContext();
     }
@@ -136,7 +132,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     public Project duplicate() {
         BuildOptions duplicateBuildOptions = BuildOptions.builder().build().acceptTheirs(buildOptions());
         SingleFileProject singleFileProject = new SingleFileProject(
-                ProjectEnvironmentBuilder.getDefaultBuilder(), this.sourceRoot.toString(), duplicateBuildOptions);
+                ProjectEnvironmentBuilder.getDefaultBuilder(), this.sourceRoot, duplicateBuildOptions);
         return resetPackage(singleFileProject);
     }
 

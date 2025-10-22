@@ -19,14 +19,14 @@ import io.ballerina.projects.internal.ProjectDiagnosticErrorCode;
 import io.ballerina.projects.util.ProjectUtils;
 import io.ballerina.tools.diagnostics.Diagnostic;
 
-import java.nio.file.Path;
+import io.ballerina.fs.Path;
 
 public class Main {
     private static final PrintStream out = System.out;
 
     public static void main(String[] args) {
         System.setProperty("ballerina.home", "/Users/sithi/.ballerina");
-        SingleFileProject project = SingleFileProject.load("/Users/sithi/sandbox/somewhere/empty.bal");
+        SingleFileProject project = SingleFileProject.load(Path.of("/Users/sithi/sandbox/somewhere/empty.bal"));
 
         codegen(project);
     }

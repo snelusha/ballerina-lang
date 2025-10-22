@@ -51,7 +51,7 @@ import io.ballerina.projects.util.ProjectPaths;
 import org.wso2.ballerinalang.util.RepoUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import io.ballerina.fs.Files;
 import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -513,11 +513,7 @@ public class BuildProject extends Project implements Comparable<Project> {
     }
 
     private static void writeContent(Path filePath, String content) {
-        try {
-            Files.write(filePath, Collections.singleton(content));
-        } catch (IOException e) {
-            throw new ProjectException("Failed to write dependencies to the 'Dependencies.toml' file");
-        }
+        throw new RuntimeException();
     }
 
     private static void createBuildFile(Path buildFilePath) {
@@ -552,11 +548,6 @@ public class BuildProject extends Project implements Comparable<Project> {
             return;
         }
         // write build file
-        try {
-            Files.write(buildFilePath, Collections.singleton(gson.toJson(buildJson)));
-        } catch (IOException e) {
-            // ignore
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.ballerina.fs;
 
 import java.io.IOException;
+import java.net.URI;
 
 public interface Path extends Comparable<Path> {
 
@@ -13,6 +14,12 @@ public interface Path extends Comparable<Path> {
     Path normalize();
 
     File toFile();
+    
+    java.io.File toJavaFile();
+    
+    URI toUri();
+    
+    java.nio.file.Path toNioPath();
 
     boolean isAbsolute();
 
@@ -49,4 +56,30 @@ public interface Path extends Comparable<Path> {
     void createFile();
 
     String readString();
+    
+    FileSystem getFileSystem();
+    
+    int getNameCount();
+    
+    Path getName(int index);
+    
+    Path subpath(int beginIndex, int endIndex);
+    
+    boolean startsWith(Path other);
+    
+    boolean startsWith(String other);
+    
+    boolean endsWith(Path other);
+    
+    boolean endsWith(String other);
+    
+    Path relativize(Path other);
+    
+    Path resolveSibling(Path other);
+    
+    Path resolveSibling(String other);
+
+    Path toRealPath(LinkOption... options) throws IOException;
+
+    String toString();
 }
