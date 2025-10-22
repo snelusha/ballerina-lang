@@ -52,7 +52,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
         return new ProjectLoadResult(singleFileProject, singleFileProject.currentPackage().manifest().diagnostics());
     }
 
-    public static SingleFileProject load(String projectPath) {
+    public static SingleFileProject load(Path projectPath) {
         PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
         SingleFileProject singleFileProject = new SingleFileProject(
                 ProjectEnvironmentBuilder.getDefaultBuilder(), projectPath, BuildOptions.builder().build()
@@ -112,7 +112,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
         return singleFileProject;
     }
 
-    private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, String filePath, BuildOptions buildOptions) {
+    private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, Path filePath, BuildOptions buildOptions) {
         super(ProjectKind.SINGLE_FILE_PROJECT, filePath, environmentBuilder, buildOptions, null);
 
         try {
@@ -150,7 +150,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     }
 
     @Override
-    public Optional<String> documentPath(DocumentId documentId) {
+    public Optional<Path> documentPath(DocumentId documentId) {
         if (this.currentPackage().getDefaultModule().documentIds().iterator().next().equals(documentId)) {
             return Optional.of(sourceRoot);
         }

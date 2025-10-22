@@ -35,7 +35,7 @@ import java.util.Optional;
  * @since 2.0.0
  */
 public abstract class Project {
-    protected final String sourceRoot;
+    protected final Path sourceRoot;
     private Package currentPackage;
     private BuildOptions buildOptions;
     protected ProjectEnvironment projectEnvironment;
@@ -44,7 +44,7 @@ public abstract class Project {
     private final List<CompilerPluginContextIml> compilerPluginContexts;
     protected WorkspaceProject workspaceProject;
 
-    protected Project(ProjectKind projectKind, String projectPath,
+    protected Project(ProjectKind projectKind, Path projectPath,
                       ProjectEnvironmentBuilder projectEnvironmentBuilder, BuildOptions buildOptions,
                       WorkspaceProject workspaceProject) {
         this.projectKind = projectKind;
@@ -55,7 +55,7 @@ public abstract class Project {
         this.workspaceProject = workspaceProject;
     }
 
-    protected Project(ProjectKind projectKind, String projectPath, BuildOptions buildOptions) {
+    protected Project(ProjectKind projectKind, Path projectPath, BuildOptions buildOptions) {
         this.projectKind = projectKind;
         this.sourceRoot = projectPath;;
         this.buildOptions = buildOptions;
@@ -80,7 +80,7 @@ public abstract class Project {
         setCurrentPackage(newPackage);
     }
 
-    public String sourceRoot() {
+    public Path sourceRoot() {
         return this.sourceRoot;
     }
 
@@ -153,7 +153,7 @@ public abstract class Project {
 
     public abstract DocumentId documentId(Path file);
 
-    public abstract Optional<String> documentPath(DocumentId documentId);
+    public abstract Optional<Path> documentPath(DocumentId documentId);
 
     public abstract void save();
 

@@ -97,7 +97,7 @@ public final class PackageConfigCreator {
        return createBuildProjectConfig(projectDirPath, false, null);
     }
 
-    public static PackageConfig createSingleFileProjectConfig(String filePath, Boolean disableSyntaxTree) {
+    public static PackageConfig createSingleFileProjectConfig(Path filePath, Boolean disableSyntaxTree) {
         ProjectFiles.validateSingleFileProjectFilePath(filePath);
 
         // Create a PackageManifest instance
@@ -112,7 +112,7 @@ public final class PackageConfigCreator {
                 Collections.emptyMap(), disableSyntaxTree);
     }
 
-    public static PackageConfig createSingleFileProjectConfig(String filePath) {
+    public static PackageConfig createSingleFileProjectConfig(Path filePath) {
         return createSingleFileProjectConfig(filePath, false);
     }
 

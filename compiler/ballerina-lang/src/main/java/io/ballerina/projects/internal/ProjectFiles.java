@@ -68,13 +68,12 @@ public final class ProjectFiles {
     private ProjectFiles() {
     }
 
-    public static PackageData loadSingleFileProjectPackageData(String path) {
+    public static PackageData loadSingleFileProjectPackageData(Path filePath) {
         DocumentData documentData = DocumentData.fromHardcoded("empty.bal", """
                 public function main() {
                 }
                 """);
 
-        Path filePath = Path.of(path);
         ModuleData defaultModule = ModuleData
                 .from(filePath, DOT, Collections.singletonList(documentData), Collections.emptyList(), null);
         return PackageData.from(filePath, defaultModule, Collections.emptyList(),
