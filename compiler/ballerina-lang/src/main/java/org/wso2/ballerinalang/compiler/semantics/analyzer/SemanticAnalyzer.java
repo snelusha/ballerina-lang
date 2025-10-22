@@ -18,6 +18,7 @@
 package org.wso2.ballerinalang.compiler.semantics.analyzer;
 
 import io.ballerina.compiler.api.symbols.DiagnosticState;
+import io.ballerina.fs.TInteger;
 import io.ballerina.projects.ModuleDescriptor;
 import io.ballerina.tools.diagnostics.Location;
 import io.ballerina.types.Env;
@@ -4703,7 +4704,7 @@ public class SemanticAnalyzer extends SimpleBLangNodeAnalyzer<SemanticAnalyzer.A
                 continue;
             }
 
-            attachmentCounts.merge(attachment.annotationSymbol, 1, Integer::sum);
+            attachmentCounts.merge(attachment.annotationSymbol, 1, TInteger::sum);
         }
 
         attachmentCounts.forEach((symbol, count) -> {
