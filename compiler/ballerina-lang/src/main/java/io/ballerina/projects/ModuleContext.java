@@ -17,37 +17,6 @@
  */
 package io.ballerina.projects;
 
-import io.ballerina.projects.PackageResolution.DependencyResolution;
-import io.ballerina.projects.environment.ModuleLoadRequest;
-import io.ballerina.projects.environment.PackageResolver;
-import io.ballerina.projects.environment.ProjectEnvironment;
-import io.ballerina.projects.internal.CompilerPhaseRunner;
-import io.ballerina.projects.internal.ModuleContextDataHolder;
-import io.ballerina.projects.util.ProjectUtils;
-import io.ballerina.tools.diagnostics.Diagnostic;
-import io.ballerina.tools.diagnostics.Location;
-import org.ballerinalang.model.TreeBuilder;
-import org.ballerinalang.model.elements.Flag;
-import org.ballerinalang.model.elements.PackageID;
-import org.wso2.ballerinalang.compiler.BIRPackageSymbolEnter;
-import org.wso2.ballerinalang.compiler.PackageCache;
-import org.wso2.ballerinalang.compiler.bir.writer.BIRBinaryWriter;
-import org.wso2.ballerinalang.compiler.diagnostic.BLangDiagnosticLocation;
-import org.wso2.ballerinalang.compiler.semantics.analyzer.SymbolEnter;
-import org.wso2.ballerinalang.compiler.semantics.analyzer.Types;
-import org.wso2.ballerinalang.compiler.semantics.model.SymbolTable;
-import org.wso2.ballerinalang.compiler.semantics.model.symbols.BPackageSymbol;
-import org.wso2.ballerinalang.compiler.tree.BLangPackage;
-import org.wso2.ballerinalang.compiler.tree.BLangTestablePackage;
-import org.wso2.ballerinalang.compiler.util.CompilerContext;
-import org.wso2.ballerinalang.programfile.BIRPackageFile;
-import org.wso2.ballerinalang.programfile.PackageFileWriter;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,6 +27,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import io.ballerina.projects.PackageResolution.DependencyResolution;
+import io.ballerina.projects.environment.ModuleLoadRequest;
+import io.ballerina.projects.environment.PackageResolver;
+import io.ballerina.projects.environment.ProjectEnvironment;
+import io.ballerina.projects.internal.CompilerPhaseRunner;
+import io.ballerina.projects.internal.ModuleContextDataHolder;
+import io.ballerina.tools.diagnostics.Diagnostic;
+import io.ballerina.tools.diagnostics.Location;
+import org.ballerinalang.model.TreeBuilder;
+import org.ballerinalang.model.elements.Flag;
+import org.ballerinalang.model.elements.PackageID;
+import org.wso2.ballerinalang.compiler.BIRPackageSymbolEnter;
+import org.wso2.ballerinalang.compiler.PackageCache;
+import org.wso2.ballerinalang.compiler.diagnostic.BLangDiagnosticLocation;
+import org.wso2.ballerinalang.compiler.semantics.analyzer.SymbolEnter;
+import org.wso2.ballerinalang.compiler.semantics.analyzer.Types;
+import org.wso2.ballerinalang.compiler.semantics.model.symbols.BPackageSymbol;
+import org.wso2.ballerinalang.compiler.tree.BLangPackage;
+import org.wso2.ballerinalang.compiler.tree.BLangTestablePackage;
+import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
 import static org.ballerinalang.model.tree.SourceKind.REGULAR_SOURCE;
 import static org.ballerinalang.model.tree.SourceKind.TEST_SOURCE;
@@ -71,7 +61,7 @@ import static org.ballerinalang.model.tree.SourceKind.TEST_SOURCE;
  */
 public class ModuleContext {
 
-    private static final WeakReference<byte[]> DEFAULT_BIR_BYTE = new WeakReference<>(new byte[0]);
+    private static final byte[] DEFAULT_BIR_BYTE = new byte[0];
 
     private final ModuleId moduleId;
     private final ModuleDescriptor moduleDescriptor;
@@ -88,7 +78,7 @@ public class ModuleContext {
     private Set<ModuleDependency> moduleDependencies;
     private BLangPackage bLangPackage;
     private BPackageSymbol bPackageSymbol;
-    private WeakReference<byte[]> birBytes = DEFAULT_BIR_BYTE;
+    private byte[] birBytes = DEFAULT_BIR_BYTE;
     private final Bootstrap bootstrap;
     private ModuleCompilationState moduleCompState;
     private Set<ModuleLoadRequest> allModuleLoadRequests = null;
@@ -370,7 +360,7 @@ public class ModuleContext {
 
     static void compileInternal(ModuleContext moduleContext, CompilerContext compilerContext) {
         PackageID moduleCompilationId = moduleContext.descriptor().moduleCompilationId();
-        String bootstrapLangLibName = System.getProperty("BOOTSTRAP_LANG_LIB");
+        String bootstrapLangLibName = null;
         if (bootstrapLangLibName != null) {
             moduleContext.bootstrap.loadLangLib(compilerContext, moduleCompilationId);
         }
@@ -395,7 +385,7 @@ public class ModuleContext {
         // Parse source files
         for (DocumentContext documentContext : moduleContext.srcDocContextMap.values()) {
             pkgNode.addCompilationUnit(documentContext.compilationUnit(compilerContext, moduleCompilationId,
-                                                                       REGULAR_SOURCE));
+                    REGULAR_SOURCE));
         }
 
         if (!moduleContext.testSrcDocumentIds().isEmpty()) {
@@ -409,13 +399,7 @@ public class ModuleContext {
             packageCache.putSymbol(pkgNode.packageID, pkgNode.symbol);
             compilerPhaseRunner.performTypeCheckPhases(pkgNode);
         } catch (Throwable t) {
-            assert false : "Compilation failed due to " + ((Supplier<String>) () -> {
-                StringWriter errors = new StringWriter();
-                t.printStackTrace(new PrintWriter(errors));
-                return errors.toString();
-            }).get();
-
-            compilerPhaseRunner.addDiagnosticForUnhandledException(pkgNode, t);
+            throw new RuntimeException(t);
         }
         moduleContext.bLangPackage = pkgNode;
     }
@@ -424,7 +408,7 @@ public class ModuleContext {
                                      CompilerBackend compilerBackend,
                                      CompilerContext compilerContext) {
         // Perform the rest of the compilation phases before generating platform-specific code
-        String bootstrapLangLibName = System.getProperty("BOOTSTRAP_LANG_LIB");
+        String bootstrapLangLibName = null;
         CompilerPhaseRunner compilerPhaseRunner = CompilerPhaseRunner.getInstance(compilerContext);
         if (bootstrapLangLibName != null) {
             compilerPhaseRunner.performLangLibBirGenPhases(moduleContext.bLangPackage);
@@ -432,89 +416,13 @@ public class ModuleContext {
             try {
                 compilerPhaseRunner.performBirGenPhases(moduleContext.bLangPackage);
             } catch (Throwable t) {
-                assert false : "Compilation failed due to " + ((Supplier<String>) () -> {
-                    StringWriter errors = new StringWriter();
-                    t.printStackTrace(new PrintWriter(errors));
-                    return errors.toString();
-                }).get();
-                compilerPhaseRunner.addDiagnosticForUnhandledException(moduleContext.bLangPackage, t);
-                return;
+                throw new RuntimeException(t);
             }
-        }
-
-        // Note: The BIR and JAR caching should be atomic and so either both should be created or none.
-        ByteArrayOutputStream birContent;
-
-        // Skip caching BIR and JAR if there are diagnostics
-        if (Diagnostics.hasErrors(moduleContext.diagnostics())) {
-            return;
-        }
-
-        // Serialize the BIR  model
-        birContent = generateBIR(moduleContext, compilerContext);
-
-        // Skip the code generation phase if there are diagnostics
-        if (Diagnostics.hasErrors(moduleContext.diagnostics())) {
-            return;
-        }
-
-        // Generate and write the thin JAR to the file system
-        compilerBackend.performCodeGen(moduleContext, moduleContext.compilationCache);
-
-        // Skip bir caching if jar generation is not successful
-        if (Diagnostics.hasErrors(moduleContext.diagnostics())) {
-            return;
-        }
-
-        if (birContent == null) {
-            return;
-        }
-
-        // Write the bir to the file system
-        // This code will execute only if JAR caching is successful
-        // TODO: check the filesystem cache and delete if the cache is incomplete (if BIR or JAR is missing)
-        moduleContext.compilationCache.cacheBir(moduleContext.moduleName(), birContent);
-    }
-
-    private static boolean shouldGenerateBir(ModuleContext moduleContext) {
-        if (moduleContext.project.kind().equals(ProjectKind.BALA_PROJECT)) {
-            return true;
-        }
-        if (ProjectUtils.isBuiltInPackage(
-                moduleContext.descriptor().org(), moduleContext.descriptor().packageName().toString())) {
-            return true;
-        }
-        if (moduleContext.project.buildOptions().compilationOptions().dumpBirFile()) {
-            return true;
-        }
-        return moduleContext.project.kind().equals(ProjectKind.BUILD_PROJECT);
-    }
-
-    private static ByteArrayOutputStream generateBIR(ModuleContext moduleContext, CompilerContext compilerContext) {
-        if (!shouldGenerateBir(moduleContext)) {
-            return null;
-        }
-        // Can we improve this logic
-        ByteArrayOutputStream birContent = new ByteArrayOutputStream();
-        SymbolTable symTable = SymbolTable.getInstance(compilerContext);
-        try {
-            BIRPackageFile birPackageFile = moduleContext.bLangPackage.symbol.birPackageFile;
-            if (birPackageFile == null) {
-                birPackageFile = new BIRPackageFile.EagerBirPackageFile(
-                        new BIRBinaryWriter(moduleContext.bLangPackage.symbol.bir, symTable.typeEnv()).serialize());
-                moduleContext.bLangPackage.symbol.birPackageFile = birPackageFile;
-            }
-            byte[] pkgBirBinaryContent = PackageFileWriter.writePackage(birPackageFile);
-            birContent.writeBytes(pkgBirBinaryContent);
-            return birContent;
-        } catch (IOException e) {
-            // This path may never be executed
-            throw new RuntimeException("Failed to convert BIR model to a byte array", e);
         }
     }
 
     static void loadBirBytesInternal(ModuleContext moduleContext) {
-        moduleContext.birBytes = new WeakReference<>(moduleContext.loadBirBytesInternalInner());
+        moduleContext.birBytes = moduleContext.loadBirBytesInternalInner();
     }
 
     private byte[] loadBirBytesInternalInner() {
@@ -545,7 +453,7 @@ public class ModuleContext {
         moduleContext.srcDocContextMap.values().forEach(DocumentContext::shrink);
     }
 
-    @Deprecated (forRemoval = true)
+    @Deprecated
     Optional<MdDocumentContext> moduleMdContext() {
         return Optional.ofNullable(this.readmeMdContext);
     }
@@ -603,11 +511,6 @@ public class ModuleContext {
     }
 
     public byte[] getBirBytes() {
-        byte[] birBytes = this.birBytes.get();
-        if (birBytes == null) {
-            birBytes = loadBirBytesInternalInner();
-            this.birBytes = new WeakReference<>(birBytes);
-        }
-        return birBytes;
+        return this.birBytes;
     }
 }

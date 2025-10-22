@@ -19,6 +19,7 @@ package io.ballerina.projects;
 
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.impl.BallerinaSemanticModel;
+import io.ballerina.fs.Path;
 import io.ballerina.projects.CompilerBackend.TargetPlatform;
 import io.ballerina.projects.environment.ProjectEnvironment;
 import io.ballerina.projects.internal.DefaultDiagnosticResult;
@@ -30,12 +31,10 @@ import org.wso2.ballerinalang.compiler.tree.BLangPackage;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 import org.wso2.ballerinalang.compiler.util.CompilerOptions;
 
-import io.ballerina.fs.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.function.Function;
 
 import static org.ballerinalang.compiler.CompilerOptionName.EXPERIMENTAL;
@@ -216,12 +215,7 @@ public class PackageCompilation {
     private void runPluginCodeAnalysis(List<Diagnostic> diagnostics) {
         // only run plugins for build projects
         if (rootPackageContext.project().kind().equals(ProjectKind.BUILD_PROJECT)) {
-            ServiceLoader<CompilerPlugin> processorServiceLoader = ServiceLoader.load(CompilerPlugin.class);
-            for (CompilerPlugin plugin : processorServiceLoader) {
-                List<Diagnostic> pluginDiagnostics = plugin.codeAnalyze(rootPackageContext.project());
-                diagnostics.addAll(pluginDiagnostics);
-                this.pluginDiagnostics.addAll(pluginDiagnostics);
-            }
+            throw new RuntimeException();
         }
     }
 

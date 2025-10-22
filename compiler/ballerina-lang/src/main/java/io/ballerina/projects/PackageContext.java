@@ -126,15 +126,15 @@ class PackageContext {
             testResourceContextMap.put(resourceConfig.documentId(), ResourceContext.from(resourceConfig));
         }
         return new PackageContext(project, packageConfig.packageId(), packageConfig.packageManifest(),
-                          packageConfig.dependencyManifest(),
-                          packageConfig.ballerinaToml().map(TomlDocumentContext::from).orElse(null),
-                          packageConfig.dependenciesToml().map(TomlDocumentContext::from).orElse(null),
-                          packageConfig.cloudToml().map(TomlDocumentContext::from).orElse(null),
-                          packageConfig.compilerPluginToml().map(TomlDocumentContext::from).orElse(null),
-                          packageConfig.balToolToml().map(TomlDocumentContext::from).orElse(null),
-                          packageConfig.readmeMd().map(MdDocumentContext::from).orElse(null),
-                          compilationOptions, moduleContextMap, packageConfig.packageDescDependencyGraph(),
-                          resourceContextMap, testResourceContextMap);
+                packageConfig.dependencyManifest(),
+                packageConfig.ballerinaToml().map(TomlDocumentContext::from).orElse(null),
+                packageConfig.dependenciesToml().map(TomlDocumentContext::from).orElse(null),
+                packageConfig.cloudToml().map(TomlDocumentContext::from).orElse(null),
+                packageConfig.compilerPluginToml().map(TomlDocumentContext::from).orElse(null),
+                packageConfig.balToolToml().map(TomlDocumentContext::from).orElse(null),
+                packageConfig.readmeMd().map(MdDocumentContext::from).orElse(null),
+                compilationOptions, moduleContextMap, packageConfig.packageDescDependencyGraph(),
+                resourceContextMap, testResourceContextMap);
     }
 
     PackageId packageId() {
@@ -190,7 +190,7 @@ class PackageContext {
     }
 
 
-    @Deprecated (forRemoval = true)
+    @Deprecated
     Optional<MdDocumentContext> packageMdContext() {
         return Optional.ofNullable(readmeMdContext);
     }
@@ -287,7 +287,7 @@ class PackageContext {
 
     PackageResolution getResolution(CompilationOptions compilationOptions, boolean isCacheEnabled) {
         if (!isCacheEnabled || packageResolution == null) {
-                packageResolution = PackageResolution.from(this, compilationOptions);
+            packageResolution = PackageResolution.from(this, compilationOptions);
         }
         return packageResolution;
     }
@@ -299,14 +299,7 @@ class PackageContext {
         return buildToolResolution;
     }
 
-    BuildToolResolution getBuildToolResolution(CompilationOptions compilationOptions) {
-        if (buildToolResolution == null) {
-            buildToolResolution = BuildToolResolution.from(this, compilationOptions);
-        }
-        return buildToolResolution;
-    }
-
-   PackageResolution getResolution(PackageResolution oldResolution) {
+    PackageResolution getResolution(PackageResolution oldResolution) {
         if (packageResolution == null) {
             packageResolution = PackageResolution.from(oldResolution, this, this.compilationOptions);
         }

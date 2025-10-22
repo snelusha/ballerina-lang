@@ -24,7 +24,6 @@ import io.ballerina.projects.PackageDependencyScope;
 import io.ballerina.projects.PackageDescriptor;
 import io.ballerina.projects.PackageVersion;
 import io.ballerina.projects.environment.PackageCache;
-import io.ballerina.projects.environment.PackageLockingMode;
 import io.ballerina.projects.environment.PackageMetadataResponse;
 import io.ballerina.projects.environment.PackageRepository;
 import io.ballerina.projects.environment.PackageResolver;
@@ -94,33 +93,33 @@ public class DefaultPackageResolver implements PackageResolver {
         return new ArrayList<>(
                 Stream.of(responseListInDist, responseListInCentral)
                         .flatMap(Collection::stream).collect(Collectors.toMap(
-                        ImportModuleResponse::importModuleRequest, Function.identity(),
-                        (ImportModuleResponse x, ImportModuleResponse y) -> {
-                            if (y.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
-                                return x;
-                            }
-                            if (x.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
-                                return y;
-                            }
-                            if (!x.packageDescriptor().name().equals(y.packageDescriptor().name())) {
-                                ResolutionRequest resolutionRequest = ResolutionRequest
-                                        .from(y.packageDescriptor(), PackageDependencyScope.DEFAULT,
-                                                DependencyResolutionType.SOURCE,
-                                                options.packageLockingMode());
-                                Collection<PackageVersion> packageVersions =
-                                        distributionRepo.getPackageVersions(resolutionRequest, options);
-                                // If module exists in both repos, then we check if a newer version of
-                                // y (package in central) in dist repo.
-                                // If yes, we assume that the latest version of y does not contain the
-                                // module. Hence, return x.
-                                // Else, there is no newer package of y in dist. We assume that there exist a newer
-                                // version of x in central which does not have this module. Hence, return y.
-                                if (packageVersions.isEmpty()) {
-                                    return y;
-                                }
-                            }
-                            return x;
-                        })).values());
+                                ImportModuleResponse::importModuleRequest, Function.identity(),
+                                (ImportModuleResponse x, ImportModuleResponse y) -> {
+                                    if (y.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
+                                        return x;
+                                    }
+                                    if (x.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
+                                        return y;
+                                    }
+                                    if (!x.packageDescriptor().name().equals(y.packageDescriptor().name())) {
+                                        ResolutionRequest resolutionRequest = ResolutionRequest
+                                                .from(y.packageDescriptor(), PackageDependencyScope.DEFAULT,
+                                                        DependencyResolutionType.SOURCE,
+                                                        options.packageLockingMode());
+                                        Collection<PackageVersion> packageVersions =
+                                                distributionRepo.getPackageVersions(resolutionRequest, options);
+                                        // If module exists in both repos, then we check if a newer version of
+                                        // y (package in central) in dist repo.
+                                        // If yes, we assume that the latest version of y does not contain the
+                                        // module. Hence, return x.
+                                        // Else, there is no newer package of y in dist. We assume that there exist a newer
+                                        // version of x in central which does not have this module. Hence, return y.
+                                        if (packageVersions.isEmpty()) {
+                                            return y;
+                                        }
+                                    }
+                                    return x;
+                                })).values());
     }
 
     @Override
@@ -172,29 +171,14 @@ public class DefaultPackageResolver implements PackageResolver {
         Collection<PackageMetadataResponse> latestVersionsInDist =
                 distributionRepo.getPackageMetadata(requests, options);
 
-        Collection<ResolutionRequest> centralLoadRequests;
-        List<PackageMetadataResponse> resolvedRequests = new ArrayList<>(workspacePackages.stream()
-                .filter(r -> r.resolutionStatus().equals(ResolutionStatus.RESOLVED))
-                .toList());
-
-        if (options.packageLockingMode().equals(PackageLockingMode.HARD) || options.sticky()) {
-            // If sticky is enabled, filter out packages that are resolved from the dist repo
-            resolvedRequests.addAll(latestVersionsInDist.stream()
-                    .filter(r -> r.resolutionStatus().equals(ResolutionStatus.RESOLVED))
-                    .toList());
-        }
-
-        // Remove already workspace resolved requests from the central request list
-        centralLoadRequests = requests.stream().filter(r -> resolvedRequests.stream()
-                        .noneMatch(resolvedReq -> resolvedReq.packageLoadRequest().equals(r)))
-                .toList();
-
-        // Remove built-in packages from the central requests
-        centralLoadRequests = centralLoadRequests.stream()
+        // Send non built in packages to central
+        Collection<ResolutionRequest> centralLoadRequests = requests.stream()
                 .filter(r -> !r.packageDescriptor().isBuiltInPackage())
-                .toList();
+                .collect(Collectors.toList());
+//        Collection<PackageMetadataResponse> latestVersionsInCentral =
+//                centralRepo.getPackageMetadata(centralLoadRequests, options);
         Collection<PackageMetadataResponse> latestVersionsInCentral =
-                centralRepo.getPackageMetadata(centralLoadRequests, options);
+                List.of();
 
         // TODO Unit test following merge
         List<PackageMetadataResponse> responseDescriptors = new ArrayList<>(
@@ -203,25 +187,25 @@ public class DefaultPackageResolver implements PackageResolver {
                 Stream.of(localRepoPackages, allCustomRepoPackages, latestVersionsInDist,
                                 workspacePackages, latestVersionsInCentral)
                         .flatMap(Collection::stream).collect(Collectors.toMap(
-                        PackageMetadataResponse::packageLoadRequest, Function.identity(),
-                        (PackageMetadataResponse x, PackageMetadataResponse y) -> {
-                            // There will be 2 iterations (number of repos-1) and the returned
-                            // value of the first iteration will be the 'x' for the next iteration.
-                            if (y.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
-                                return x;
-                            }
-                            if (x.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
-                                return y;
-                            }
-                            if (x.resolvedDescriptor().version().equals(y.resolvedDescriptor().version())) {
-                                return x;
-                            }
-                            if (getLatest(x.resolvedDescriptor().version(), y.resolvedDescriptor().version())
-                                    .equals(y.resolvedDescriptor().version())) {
-                                return y;
-                            }
-                            return x;
-                        })).values());
+                                PackageMetadataResponse::packageLoadRequest, Function.identity(),
+                                (PackageMetadataResponse x, PackageMetadataResponse y) -> {
+                                    // There will be 2 iterations (number of repos-1) and the returned
+                                    // value of the first iteration will be the 'x' for the next iteration.
+                                    if (y.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
+                                        return x;
+                                    }
+                                    if (x.resolutionStatus().equals(ResolutionStatus.UNRESOLVED)) {
+                                        return y;
+                                    }
+                                    if (x.resolvedDescriptor().version().equals(y.resolvedDescriptor().version())) {
+                                        return x;
+                                    }
+                                    if (getLatest(x.resolvedDescriptor().version(), y.resolvedDescriptor().version())
+                                            .equals(y.resolvedDescriptor().version())) {
+                                        return y;
+                                    }
+                                    return x;
+                                })).values());
 
         return responseDescriptors;
     }
@@ -235,7 +219,7 @@ public class DefaultPackageResolver implements PackageResolver {
 
         return requests.stream()
                 .map(request -> resolvePackage(request, options))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private ResolutionResponse resolvePackage(ResolutionRequest resolutionReq, ResolutionOptions options) {

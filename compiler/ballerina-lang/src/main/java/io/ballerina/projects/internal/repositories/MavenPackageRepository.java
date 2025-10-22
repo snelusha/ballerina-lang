@@ -16,8 +16,8 @@
 
 package io.ballerina.projects.internal.repositories;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+
+import io.ballerina.fs.Path;
 import io.ballerina.projects.DependencyGraph;
 import io.ballerina.projects.ModuleDescriptor;
 import io.ballerina.projects.Package;
@@ -32,24 +32,13 @@ import io.ballerina.projects.environment.ResolutionOptions;
 import io.ballerina.projects.environment.ResolutionRequest;
 import io.ballerina.projects.internal.model.Proxy;
 import io.ballerina.projects.internal.model.Repository;
-import io.ballerina.projects.util.ProjectUtils;
-import org.apache.commons.io.FileUtils;
-import org.ballerinalang.maven.bala.client.MavenResolverClient;
-import org.ballerinalang.maven.bala.client.MavenResolverClientException;
 import org.wso2.ballerinalang.util.RepoUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import io.ballerina.fs.Files;
-import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static io.ballerina.projects.util.ProjectConstants.BALA_EXTENSION;
 
 /**
  * This class represents the maven package repositories.
@@ -61,19 +50,14 @@ public class MavenPackageRepository extends AbstractPackageRepository {
 
     public static final String PLATFORM = "platform";
     private final FileSystemRepository fileSystemCache;
-    private final MavenResolverClient client;
-    private final String repoLocation;
 
 
-    public MavenPackageRepository(Environment environment, Path cacheDirectory, String distributionVersion,
-                                  MavenResolverClient client, String repoLocation) {
+    public MavenPackageRepository(Environment environment, Path cacheDirectory, String distributionVersion) {
         this.fileSystemCache = new FileSystemRepository(environment, cacheDirectory, distributionVersion);
-        this.client = client;
-        this.repoLocation = repoLocation;
     }
 
     public static MavenPackageRepository from(Environment environment, Path cacheDirectory, Repository repository) {
-        if (Files.notExists(cacheDirectory)) {
+        if (cacheDirectory.notExists()) {
             throw new ProjectException("cache directory does not exists: " + cacheDirectory);
         }
 
@@ -81,22 +65,8 @@ public class MavenPackageRepository extends AbstractPackageRepository {
             throw new ProjectException("repository url is not provided");
         }
         String ballerinaShortVersion = RepoUtils.getBallerinaShortVersion();
-        MavenResolverClient mvnClient = new MavenResolverClient();
-        if (!repository.username().isEmpty() && !repository.password().isEmpty()) {
-            mvnClient.addRepository(repository.id(), repository.url(), repository.username(), repository.password());
-        } else {
-            mvnClient.addRepository(repository.id(), repository.url());
-        }
 
-        Settings settings;
-        settings = RepoUtils.readSettings();
-        Proxy proxy = settings.getProxy();
-        mvnClient.setProxy(proxy.host(), proxy.port(), proxy.username(), proxy.password());
-
-        String repoLocation = cacheDirectory.resolve("bala").toAbsolutePath().toString();
-
-        return new MavenPackageRepository(environment, cacheDirectory, ballerinaShortVersion, mvnClient,
-                repoLocation);
+        return new MavenPackageRepository(environment, cacheDirectory, ballerinaShortVersion);
     }
 
     @Override
@@ -145,7 +115,7 @@ public class MavenPackageRepository extends AbstractPackageRepository {
         }
 
         Path balaPath = this.fileSystemCache.getPackagePath(org.toString(), name.toString(), version.toString());
-        if (Files.exists(balaPath)) {
+        if (balaPath.exists()) {
             return Collections.singletonList(version);
         } else {
             return Collections.emptyList();
@@ -170,6 +140,7 @@ public class MavenPackageRepository extends AbstractPackageRepository {
     public boolean getPackageFromRemoteRepo(String org,
                                             String name,
                                             String version) {
-        return true;
+        // Stub implementation - web compiler doesn't support remote repositories
+        return false;
     }
 }

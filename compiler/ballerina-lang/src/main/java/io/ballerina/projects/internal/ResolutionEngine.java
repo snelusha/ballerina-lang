@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Responsible for creating the dependency graph with automatic version updates.
@@ -98,7 +99,7 @@ public class ResolutionEngine {
         // 3) Update the dependency versions if required
         //    This method traverse through the graph as many time as time until the graph is completed.
         //    Graph is complete when it contains latest compatible versions of all dependencies.
-        updateDependencyVersions();
+//        updateDependencyVersions();
 
         // 4) Now the first round of update is done, but there may be more unresolved nodes in the graph builder.
         //    We need to keep resolving the unresolved nodes until the graph is complete.
@@ -164,7 +165,7 @@ public class ResolutionEngine {
 
     private void populateStaticDependencyGraph(Collection<DependencyNode> directDependencies) {
         List<DependencyNode> errorNodes = directDependencies.stream()
-                .filter(DependencyNode::errorNode).toList();
+                .filter(DependencyNode::errorNode).collect(Collectors.toList());
         for (DependencyNode errorNode : errorNodes) {
             graphBuilder.addErroneousDependency(
                     rootPkgDesc, errorNode.pkgDesc, errorNode.scope, errorNode.resolutionType);
@@ -215,7 +216,8 @@ public class ResolutionEngine {
 
     private Collection<PackageMetadataResponse> resolveDirectDependencies(Collection<DependencyNode> directDeps) {
         // Set the default locking mode based on the sticky build option.
-        PackageLockingMode defaultLockingMode = resolutionOptions.packageLockingMode();
+        PackageLockingMode defaultLockingMode = resolutionOptions.sticky() ?
+                PackageLockingMode.HARD : resolutionOptions.packageLockingMode();
         List<ResolutionRequest> resolutionRequests = new ArrayList<>();
 
         for (DependencyNode directDependency : directDeps) {
@@ -371,7 +373,7 @@ public class ResolutionEngine {
                 unresolvedNode.pkgDesc().version());
         if (versionCompResult == VersionCompatibilityResult.GREATER_THAN ||
                 versionCompResult == VersionCompatibilityResult.EQUAL) {
-            PackageLockingMode lockingMode = blendedDep.isFromLocalRepository() ?
+            PackageLockingMode lockingMode = resolutionOptions.sticky() || blendedDep.isFromLocalRepository() ?
                     PackageLockingMode.HARD : resolutionOptions.packageLockingMode();
             PackageDescriptor blendedDepPkgDesc = PackageDescriptor.from(blendedDep.org(), blendedDep.name(),
                     blendedDep.version(), blendedDep.repository());
@@ -402,7 +404,7 @@ public class ResolutionEngine {
     }
 
     private Collection<DependencyNode> getUnresolvedNode() {
-        if (resolutionOptions.packageLockingMode().equals(PackageLockingMode.HARD)) {
+        if (resolutionOptions.sticky()) {
             return graphBuilder.getUnresolvedNodes();
         } else {
             // Since sticky = false, we have to update all dependency nodes.
@@ -463,8 +465,8 @@ public class ResolutionEngine {
         NodeStatus nodeStatus = graphBuilder.addResolvedNode(pkgDesc, scope, resolvedType);
         if (nodeStatus == NodeStatus.ACCEPTED) {
             mergeGraph(pkgDesc, resolutionResp.dependencyGraph().orElseThrow(
-                    () -> new IllegalStateException("Graph cannot be null in the resolved dependency: " +
-                            pkgDesc.toString())),
+                            () -> new IllegalStateException("Graph cannot be null in the resolved dependency: " +
+                                    pkgDesc.toString())),
                     scope, resolvedType);
         }
 

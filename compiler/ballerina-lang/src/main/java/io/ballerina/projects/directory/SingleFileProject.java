@@ -17,6 +17,9 @@
  */
 package io.ballerina.projects.directory;
 
+import java.util.Optional;
+
+import io.ballerina.fs.Path;
 import io.ballerina.projects.BuildOptions;
 import io.ballerina.projects.DocumentId;
 import io.ballerina.projects.PackageConfig;
@@ -25,16 +28,9 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.ProjectException;
 import io.ballerina.projects.ProjectKind;
 import io.ballerina.projects.ProjectLoadResult;
-import io.ballerina.projects.environment.EnvironmentBuilder;
-import io.ballerina.projects.environment.ProjectEnvironment;
 import io.ballerina.projects.internal.PackageConfigCreator;
 import io.ballerina.projects.repos.TempDirCompilationCache;
 import io.ballerina.projects.util.ProjectConstants;
-
-import java.io.IOException;
-import io.ballerina.fs.Files;
-import io.ballerina.fs.Path;
-import java.util.Optional;
 
 /**
  * {@code SingleFileProject} represents a Ballerina standalone file.
@@ -52,15 +48,6 @@ public class SingleFileProject extends Project implements Comparable<Project> {
         return new ProjectLoadResult(singleFileProject, singleFileProject.currentPackage().manifest().diagnostics());
     }
 
-    public static SingleFileProject load(Path projectPath) {
-        PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(projectPath);
-        SingleFileProject singleFileProject = new SingleFileProject(
-                ProjectEnvironmentBuilder.getDefaultBuilder(), projectPath, BuildOptions.builder().build()
-        );
-        singleFileProject.addPackage(packageConfig);
-        return singleFileProject;
-    }
-
     /**
      * @deprecated Use {@link io.ballerina.projects.directory.ProjectLoader#load(Path, ProjectEnvironmentBuilder)}
      * Loads a single file project from the provided path.
@@ -68,7 +55,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
      * @param filePath ballerina standalone file path
      * @return single file project
      */
-    @Deprecated(forRemoval = true, since = "2201.0.0")
+    @Deprecated
     public static SingleFileProject load(ProjectEnvironmentBuilder environmentBuilder, Path filePath) {
         final BuildOptions.BuildOptionsBuilder buildOptionsBuilder = BuildOptions.builder();
         return load(environmentBuilder, filePath, buildOptionsBuilder.build());
@@ -84,7 +71,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
      * @param buildOptions build options
      * @return single file project
      */
-    @Deprecated(forRemoval = true, since = "2201.0.0")
+    @Deprecated
     public static SingleFileProject load(ProjectEnvironmentBuilder environmentBuilder, Path filePath,
                                          BuildOptions buildOptions) {
         PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath);
@@ -95,6 +82,18 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     }
 
     /**
+     * @deprecated Use {@link io.ballerina.projects.directory.ProjectLoader#load(Path)}
+     * Loads a single file project from the provided path.
+     *
+     * @param filePath ballerina standalone file path
+     * @return single file project
+     */
+    @Deprecated
+    public static SingleFileProject load(Path filePath) {
+        return load(filePath, BuildOptions.builder().build());
+    }
+
+    /**
      * @deprecated Use {@link io.ballerina.projects.directory.ProjectLoader#load(Path, BuildOptions)}
      * Loads a single file project from the provided path with build options.
      *
@@ -102,7 +101,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
      * @param buildOptions build options
      * @return single file project
      */
-    @Deprecated(forRemoval = true, since = "2201.0.0")
+    @Deprecated
     public static SingleFileProject load(Path filePath, BuildOptions buildOptions) {
         PackageConfig packageConfig = PackageConfigCreator.createSingleFileProjectConfig(filePath,
                 buildOptions.disableSyntaxTree());
@@ -113,9 +112,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     }
 
     private SingleFileProject(ProjectEnvironmentBuilder environmentBuilder, Path filePath, BuildOptions buildOptions) {
-        super(ProjectKind.SINGLE_FILE_PROJECT, filePath, environmentBuilder, buildOptions, null);
+        super(ProjectKind.SINGLE_FILE_PROJECT, filePath, environmentBuilder, buildOptions);
 
-        targetDir = null;
+        this.targetDir = null;
 
         populateCompilerContext();
     }
@@ -138,7 +137,7 @@ public class SingleFileProject extends Project implements Comparable<Project> {
 
     @Override
     public DocumentId documentId(Path file) {
-        if (!this.sourceRoot.equals(
+        if (!this.sourceRoot.toAbsolutePath().normalize().toString().equals(
                 file.toAbsolutePath().normalize().toString())) {
             throw new ProjectException("'" + file + "' does not belong to the current project");
         }
@@ -148,13 +147,9 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     @Override
     public Optional<Path> documentPath(DocumentId documentId) {
         if (this.currentPackage().getDefaultModule().documentIds().iterator().next().equals(documentId)) {
-            return Optional.of(sourceRoot);
+            return Optional.of(sourceRoot.toAbsolutePath());
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void save() {
     }
 
     @Override
@@ -165,12 +160,8 @@ public class SingleFileProject extends Project implements Comparable<Project> {
     @Override
     public Path generatedResourcesDir() {
         Path generatedResourcesPath = this.targetDir.resolve(ProjectConstants.RESOURCE_DIR_NAME);
-        if (!Files.exists(generatedResourcesPath)) {
-            try {
-                Files.createDirectories(generatedResourcesPath);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        if (!generatedResourcesPath.exists()) {
+            generatedResourcesPath.createDirectories();
         }
         return generatedResourcesPath;
     }

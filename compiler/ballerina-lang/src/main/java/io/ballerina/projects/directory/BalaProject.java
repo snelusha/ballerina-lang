@@ -18,6 +18,9 @@
 
 package io.ballerina.projects.directory;
 
+import java.util.Optional;
+
+import io.ballerina.fs.Path;
 import io.ballerina.projects.BuildOptions;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.DocumentId;
@@ -34,10 +37,6 @@ import io.ballerina.projects.internal.PackageConfigCreator;
 import io.ballerina.projects.repos.TempDirCompilationCache;
 import io.ballerina.projects.util.ProjectConstants;
 import io.ballerina.projects.util.ProjectPaths;
-
-import io.ballerina.fs.Files;
-import io.ballerina.fs.Path;
-import java.util.Optional;
 
 /**
  * {@code BalaProject} represents a Ballerina project instance created from a bala.
@@ -57,7 +56,7 @@ public class BalaProject extends Project implements Comparable<Project> {
     }
 
     private BalaProject(ProjectEnvironmentBuilder environmentBuilder, Path balaPath, BuildOptions buildOptions) {
-        super(ProjectKind.BALA_PROJECT, balaPath, environmentBuilder, buildOptions, null);
+        super(ProjectKind.BALA_PROJECT, balaPath, environmentBuilder, buildOptions);
         this.platform = BalaFiles.readPackageJson(balaPath).getPlatform();
         this.balaVersion = BalaFiles.readBalaJson(balaPath).getBala_version();
     }
@@ -84,7 +83,7 @@ public class BalaProject extends Project implements Comparable<Project> {
         if (file == null) {
             throw new ProjectException("file path cannot be null");
         }
-        if (!Files.isDirectory(this.sourceRoot)) {
+        if (!this.sourceRoot.isDirectory()) {
             throw new UnsupportedOperationException("retrieving the DocumentId from " +
                     ProjectConstants.BLANG_COMPILED_PKG_BINARY_EXT + " is not supported");
         }
@@ -116,10 +115,6 @@ public class BalaProject extends Project implements Comparable<Project> {
             }
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void save() {
     }
 
     public String platform() {

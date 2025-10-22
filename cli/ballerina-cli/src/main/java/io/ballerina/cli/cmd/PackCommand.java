@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.ballerina.cli.cmd.Constants.PACK_COMMAND;
-import static io.ballerina.projects.internal.ManifestBuilder.getStringValueFromTomlTableNode;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.SYSTEM_PROP_BAL_DEBUG;
 
 /**
@@ -151,140 +150,7 @@ public class PackCommand implements BLauncherCmd {
 
     @Override
     public void execute() {
-        long start = 0;
-
-        if (this.helpFlag) {
-            String commandUsageInfo = BLauncherCmd.getCommandUsageInfo(PACK_COMMAND);
-            this.errStream.println(commandUsageInfo);
-            return;
-        }
-
-        Project project;
-        Path absProjectPath = this.projectPath.toAbsolutePath().normalize();
-        BuildOptions buildOptions = constructBuildOptions();
-
-        // Throw an error if its a single file
-        if (FileUtils.hasExtension(this.projectPath)) {
-            CommandUtil.printError(this.errStream, "bal pack can only be used with a Ballerina package.", null, false);
-            CommandUtil.exitError(this.exitWhenFinish);
-            return;
-        }
-
-        try {
-            if (buildOptions.dumpBuildTime()) {
-                start = System.currentTimeMillis();
-                BuildTime.getInstance().timestamp = start;
-            }
-            if (!ProjectPaths.isBuildProjectRoot(projectPath) && !ProjectPaths.isWorkspaceProjectRoot(projectPath)) {
-                throw new ProjectException("invalid package path: " + absProjectPath +
-                        ". Please provide a valid Ballerina package or a workspace.");
-            }
-            project = ProjectLoader.load(projectPath, buildOptions).project();
-            if (buildOptions.dumpBuildTime()) {
-                BuildTime.getInstance().projectLoadDuration = System.currentTimeMillis() - start;
-            }
-        } catch (ProjectException e) {
-            CommandUtil.printError(this.errStream, e.getMessage(), null, false);
-            CommandUtil.exitError(this.exitWhenFinish);
-            return;
-        }
-
-        // Check `[package]` section is available when compile
-        if (project.currentPackage().ballerinaToml().get().tomlDocument().toml().getTable("package")
-                .isEmpty()) {
-            CommandUtil.printError(this.errStream,
-                    "'package' information not found in " + ProjectConstants.BALLERINA_TOML,
-                    null,
-                    false);
-            CommandUtil.exitError(this.exitWhenFinish);
-            return;
-        } else {
-            // if not empty, validate the `[package]` section
-
-            TomlTableNode pkgNode = (TomlTableNode) project.currentPackage().ballerinaToml().get().tomlDocument().toml()
-                    .rootNode().entries().get("package");
-            if (pkgNode == null || pkgNode.kind() == TomlType.NONE) {
-                CommandUtil.printError(this.errStream,
-                        "'package' information not found in " + ProjectConstants.BALLERINA_TOML,
-                        null,
-                        false);
-                CommandUtil.exitError(this.exitWhenFinish);
-                return;
-            }
-
-            List<String> pkgErrors = new ArrayList<>();
-            if ("".equals(getStringValueFromTomlTableNode(pkgNode, "org", ""))) {
-                pkgErrors.add("'org'");
-            }
-            if ("".equals(getStringValueFromTomlTableNode(pkgNode, "name", ""))) {
-                pkgErrors.add("'name'");
-            }
-            if ("".equals(getStringValueFromTomlTableNode(pkgNode, "version", ""))) {
-                pkgErrors.add("'version'");
-            }
-
-            if (!pkgErrors.isEmpty()) {
-                String pkgErrorsString;
-                if (pkgErrors.size() == 1) {
-                    CommandUtil.printError(this.errStream,
-                            "to build a package " + pkgErrors.get(0) +
-                                    " field of the package is required in " +
-                                    ProjectConstants.BALLERINA_TOML,
-                            null,
-                            false);
-                    CommandUtil.exitError(this.exitWhenFinish);
-                    return;
-                } else if (pkgErrors.size() == 2) {
-                    pkgErrorsString = pkgErrors.get(0) + " and " + pkgErrors.get(1);
-                } else {
-                    pkgErrorsString = pkgErrors.get(0) + ", " + pkgErrors.get(1) + " and " + pkgErrors.get(2);
-                }
-                CommandUtil.printError(this.errStream,
-                        "to build a package " + pkgErrorsString +
-                                " fields of the package are required in " +
-                                ProjectConstants.BALLERINA_TOML,
-                        null,
-                        false);
-                CommandUtil.exitError(this.exitWhenFinish);
-                return;
-            }
-
-        }
-
-        // Sets the debug port as a system property, which will be used when setting up debug args before running tests.
-        if (!project.buildOptions().skipTests() && this.debugPort != null) {
-            System.setProperty(SYSTEM_PROP_BAL_DEBUG, this.debugPort);
-        }
-
-        // Validate Settings.toml file
-        RepoUtils.readSettings();
-
-        if (project.kind() == ProjectKind.WORKSPACE_PROJECT) {
-            WorkspaceProject workspaceProject = (WorkspaceProject) project;
-            DependencyGraph<BuildProject> projectDependencyGraph = resolveWorkspaceDependencies(workspaceProject);
-            if (!project.sourceRoot().equals(absProjectPath)) {
-                // If the project path is not the workspace root, filter the topologically sorted list to include only
-                // the projects that are dependencies of the project at the specified path.
-                Optional<BuildProject> buildProjectOptional = projectDependencyGraph.getNodes().stream()
-                        .filter(node -> node.sourceRoot().equals(absProjectPath)).findFirst();
-                executeTasks(buildProjectOptional.orElseThrow());
-            } else {
-                for (BuildProject buildProject : projectDependencyGraph.toTopologicallySortedList()) {
-                    executeTasks(buildProject);
-                }
-            }
-        } else {
-            // Check package files are modified after last build
-            Optional<Diagnostic> deprecatedDocWarning = ProjectUtils.getProjectLoadingDiagnostic().stream().filter(
-                    diagnostic -> diagnostic.diagnosticInfo().code().equals(
-                            ProjectDiagnosticErrorCode.DEPRECATED_DOC_FILE.diagnosticId())).findAny();
-            deprecatedDocWarning.ifPresent(this.errStream::println);
-            executeTasks(project);
-        }
-
-        if (this.exitWhenFinish) {
-            Runtime.getRuntime().exit(0);
-        }
+        throw new RuntimeException();
     }
 
     private void executeTasks(Project project) {
@@ -339,7 +205,7 @@ public class PackCommand implements BLauncherCmd {
 
     @Override
     public void printLongDesc(StringBuilder out) {
-        out.append(BLauncherCmd.getCommandUsageInfo(PACK_COMMAND));
+
 
     }
 

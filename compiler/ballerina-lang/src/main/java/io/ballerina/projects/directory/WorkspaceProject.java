@@ -166,11 +166,6 @@ public class WorkspaceProject extends Project {
     }
 
     @Override
-    public void save() {
-        this.projectList.forEach(Project::save);
-    }
-
-    @Override
     public ProjectEnvironment projectEnvironmentContext() {
         return this.projectList.iterator().next().projectEnvironmentContext();
     }
@@ -231,8 +226,6 @@ public class WorkspaceProject extends Project {
 
     private static ProjectLoadResult loadBuildProject(Environment environment, Path packagePath,
                                                       WorkspaceProject workspaceProject, String org) {
-        ProjectEnvironmentBuilder projectEnvironmentBuilder = ProjectEnvironmentBuilder.getBuilder(environment);
-        return BuildProject.loadProject(packagePath, projectEnvironmentBuilder, workspaceProject.buildOptions,
-                workspaceProject, org);
+        throw new RuntimeException();
     }
 }

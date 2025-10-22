@@ -18,6 +18,9 @@
 
 package io.ballerina.projects.bala;
 
+import java.util.Optional;
+
+import io.ballerina.fs.Path;
 import io.ballerina.projects.BuildOptions;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.DocumentId;
@@ -34,17 +37,13 @@ import io.ballerina.projects.repos.TempDirCompilationCache;
 import io.ballerina.projects.util.ProjectConstants;
 import io.ballerina.projects.util.ProjectPaths;
 
-import io.ballerina.fs.Files;
-import io.ballerina.fs.Path;
-import java.util.Optional;
-
 /**
  * @deprecated Use {@link io.ballerina.projects.directory.BalaProject} instead.
  * {@code BalaProject} represents a Ballerina project instance created from a bala.
  *
  * @since 2.0.0
  */
-@Deprecated(since = "2201.13.0", forRemoval = true)
+@Deprecated
 public class BalaProject extends Project {
     private final String platform;
     private final String balaVersion;
@@ -79,7 +78,7 @@ public class BalaProject extends Project {
     }
 
     private BalaProject(ProjectEnvironmentBuilder environmentBuilder, Path balaPath, BuildOptions buildOptions) {
-        super(ProjectKind.BALA_PROJECT, balaPath, environmentBuilder, buildOptions, null);
+        super(ProjectKind.BALA_PROJECT, balaPath, environmentBuilder, buildOptions);
         this.platform = BalaFiles.readPackageJson(balaPath).getPlatform();
         this.balaVersion = BalaFiles.readBalaJson(balaPath).getBala_version();
     }
@@ -106,7 +105,7 @@ public class BalaProject extends Project {
         if (file == null) {
             throw new ProjectException("file path cannot be null");
         }
-        if (!Files.isDirectory(this.sourceRoot)) {
+        if (!this.sourceRoot.isDirectory()) {
             throw new UnsupportedOperationException("retrieving the DocumentId from " +
                     ProjectConstants.BLANG_COMPILED_PKG_BINARY_EXT + " is not supported");
         }
@@ -138,10 +137,6 @@ public class BalaProject extends Project {
             }
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void save() {
     }
 
     public String platform() {

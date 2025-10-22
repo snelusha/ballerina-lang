@@ -1,7 +1,6 @@
 package io.ballerina.projects;
 
 import io.ballerina.projects.directory.BuildProject;
-import io.ballerina.projects.environment.PackageLockingMode;
 import io.ballerina.projects.environment.ResolutionOptions;
 import io.ballerina.projects.internal.DefaultDiagnosticResult;
 import io.ballerina.projects.internal.DependencyManifestBuilder;
@@ -169,10 +168,6 @@ public class Package {
         return this.packageContext.getBuildToolResolution();
     }
 
-    BuildToolResolution getBuildToolResolution(CompilationOptions compilationOptions) {
-        return this.packageContext.getBuildToolResolution(compilationOptions);
-    }
-
     public PackageResolution getResolution(CompilationOptions compilationOptions) {
         return this.packageContext.getResolution(compilationOptions);
     }
@@ -239,7 +234,7 @@ public class Package {
      * @return PackageMd
      * @deprecated use {@link #readmeMd()} instead.
      */
-    @Deprecated (forRemoval = true, since = "2.11.0")
+    @Deprecated
     public Optional<PackageMd> packageMd() {
         if (this.packageMd.isEmpty()) {
             this.packageMd = this.packageContext.packageMdContext().map(c ->
@@ -312,11 +307,10 @@ public class Package {
         }
 
         // There are engaged compiler plugins or there is no cached compilation. We have to compile anyway
-        CompilationOptions compilationOptions = CompilationOptions.builder()
+        CompilationOptions compOptions = CompilationOptions.builder()
                 .withCodeGenerators(true)
                 .withCodeModifiers(true)
                 .build();
-        CompilationOptions compOptions = compilationOptions.acceptTheirs(project.currentPackage().compilationOptions());
         CompilerPluginManager compilerPluginManager = this.getCompilation(compOptions).compilerPluginManager();
         List<Diagnostic> diagnostics = new ArrayList<>();
         if (compilerPluginManager.engagedCodeGeneratorCount() > 0) {
@@ -367,8 +361,7 @@ public class Package {
         }
 
         // There are engaged code generators or there is no cached compilation. We have to compile anyway
-        CompilationOptions compilationOptions = CompilationOptions.builder().withCodeGenerators(true).build();
-        CompilationOptions compOptions = compilationOptions.acceptTheirs(project.currentPackage().compilationOptions());
+        CompilationOptions compOptions = CompilationOptions.builder().withCodeGenerators(true).build();
         // TODO We can avoid this compilation. Move CompilerPluginManagers out of the PackageCompilation
         // TODO How about PackageResolution
         CompilerPluginManager compilerPluginManager = this.getCompilation(compOptions).compilerPluginManager();
@@ -410,8 +403,7 @@ public class Package {
         }
 
         // There are engaged code modifiers or there is no cached compilation. We have to compile anyway
-        CompilationOptions compilationOptions = CompilationOptions.builder().withCodeModifiers(true).build();
-        CompilationOptions compOptions = compilationOptions.acceptTheirs(project.currentPackage().compilationOptions());
+        CompilationOptions compOptions = CompilationOptions.builder().withCodeModifiers(true).build();
         // TODO We can avoid this compilation. Move CompilerPluginManagers out of the PackageCompilation
         // TODO How about PackageResolution
         CompilerPluginManager compilerPluginManager = this.getCompilation(compOptions).compilerPluginManager();
@@ -434,11 +426,8 @@ public class Package {
 
     public PackageResolution getResolution(ResolutionOptions resolutionOptions) {
         boolean offline = resolutionOptions.offline();
-        PackageLockingMode packageLockingMode = resolutionOptions.packageLockingMode();
-        CompilationOptions newCompOptions = CompilationOptions.builder()
-                .setOffline(offline)
-                .setLockingMode(packageLockingMode)
-                .build();
+        boolean sticky = resolutionOptions.sticky();
+        CompilationOptions newCompOptions = CompilationOptions.builder().setOffline(offline).setSticky(sticky).build();
         newCompOptions = newCompOptions.acceptTheirs(project.currentPackage().compilationOptions());
         return this.packageContext.getResolution(newCompOptions, true);
     }
@@ -701,13 +690,13 @@ public class Package {
             DependencyGraph<ResolvedPackageDependency> newDepGraph = this.project.currentPackage().packageContext()
                     .getResolution(offlineCompOptions, true).dependencyGraph();
             cleanPackageCache(this.dependencyGraph, newDepGraph);
-            if (this.project.kind() == ProjectKind.BUILD_PROJECT && this.project.workspaceProject().isPresent()) {
-                Collection<BuildProject> wpDependents = this.project.workspaceProject().get().getResolution()
-                        .dependencyGraph().getDirectDependents((BuildProject) this.project);
-                for (BuildProject dependent : wpDependents) {
-                    dependent.resetPackage(dependent);
-                }
-            }
+//            if (this.project.kind() == ProjectKind.BUILD_PROJECT && this.project.workspaceProject().isPresent()) {
+//                Collection<BuildProject> wpDependents = this.project.workspaceProject().get().getResolution()
+//                        .dependencyGraph().getDirectDependents((BuildProject) this.project);
+//                for (BuildProject dependent : wpDependents) {
+//                    dependent.resetPackage(dependent);
+//                }
+//            }
 
             return this.project.currentPackage();
         }
