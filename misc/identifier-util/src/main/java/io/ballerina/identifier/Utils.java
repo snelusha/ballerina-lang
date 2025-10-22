@@ -18,8 +18,6 @@
 
 package io.ballerina.identifier;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,7 +86,112 @@ public final class Utils {
      * @return a new unescaped {@code String}, {@code null} if null string input
      */
     public static String unescapeJava(String str) {
-        return StringEscapeUtils.unescapeJava(str);
+        if (str == null) {
+            return null;
+        }
+
+        StringBuilder result = new StringBuilder(str.length());
+        int length = str.length();
+
+        for (int i = 0; i < length; i++) {
+            char ch = str.charAt(i);
+
+            if (ch == '\\' && i + 1 < length) {
+                char next = str.charAt(i + 1);
+
+                switch (next) {
+                    case 'n':
+                        result.append('\n');
+                        i++;
+                        break;
+                    case 't':
+                        result.append('\t');
+                        i++;
+                        break;
+                    case 'r':
+                        result.append('\r');
+                        i++;
+                        break;
+                    case 'b':
+                        result.append('\b');
+                        i++;
+                        break;
+                    case 'f':
+                        result.append('\f');
+                        i++;
+                        break;
+                    case '\'':
+                        result.append('\'');
+                        i++;
+                        break;
+                    case '\"':
+                        result.append('\"');
+                        i++;
+                        break;
+                    case '\\':
+                        result.append('\\');
+                        i++;
+                        break;
+                    case 'u':
+                        if (i + 5 < length) {
+                            try {
+                                String unicode = str.substring(i + 2, i + 6);
+                                int codePoint = Integer.parseInt(unicode, 16);
+                                result.append((char) codePoint);
+                                i += 5;
+                            } catch (NumberFormatException e) {
+                                // Invalid unicode, keep as is
+                                result.append(ch);
+                            }
+                        } else {
+                            // Not enough characters for unicode escape
+                            result.append(ch);
+                        }
+                        break;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                        // Octal escape: \0-\377
+                        int octalEnd = i + 1;
+                        int maxOctal = Math.min(i + 4, length);
+
+                        // Determine how many octal digits to read (1-3)
+                        while (octalEnd < maxOctal && str.charAt(octalEnd) >= '0' && str.charAt(octalEnd) <= '7') {
+                            octalEnd++;
+                        }
+
+                        try {
+                            String octal = str.substring(i + 1, octalEnd);
+                            int value = Integer.parseInt(octal, 8);
+
+                            // Java octal escapes are limited to \377 (255 in decimal)
+                            if (value <= 255) {
+                                result.append((char) value);
+                                i = octalEnd - 1;
+                            } else {
+                                // Invalid octal value, keep as is
+                                result.append(ch);
+                            }
+                        } catch (NumberFormatException e) {
+                            result.append(ch);
+                        }
+                        break;
+                    default:
+                        // Unknown escape sequence, keep backslash
+                        result.append(ch);
+                        break;
+                }
+            } else {
+                result.append(ch);
+            }
+        }
+
+        return result.toString();
     }
 
     private static Identifier encodeGeneratedName(String identifier) {
