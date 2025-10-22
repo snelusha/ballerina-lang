@@ -28,7 +28,11 @@ public class Main {
         System.setProperty("ballerina.home", "/Users/sithi/.ballerina");
         SingleFileProject project = SingleFileProject.load(Path.of("/Users/sithi/sandbox/somewhere/empty.bal"));
 
-        codegen(project);
+        try {
+            codegen(project);
+        } catch (Exception e) {
+            e.printStackTrace(out);
+        }
     }
 
     private static void codegen(SingleFileProject project) {
