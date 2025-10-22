@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation project(':fs')
+
     testImplementation libs.testng
 }
 

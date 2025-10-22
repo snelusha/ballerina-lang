@@ -23,6 +23,8 @@ plugins {
 description = 'Ballerina - Tools API'
 
 dependencies {
+    implementation project(':fs')
+
     testImplementation libs.testng
 }
 

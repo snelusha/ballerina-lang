@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 import java.util.regex.Pattern;
 
 import static io.ballerina.compiler.api.symbols.TypeDescKind.FUNCTION;

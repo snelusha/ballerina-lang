@@ -39,7 +39,7 @@ import org.wso2.ballerinalang.compiler.util.Names;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Maintains the internal state of a {@code Document} instance.

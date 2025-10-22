@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.compiler.api.impl.util.SymbolUtils.unescapeUnicode;
 import static io.ballerina.compiler.api.symbols.SymbolKind.SERVICE_DECLARATION;

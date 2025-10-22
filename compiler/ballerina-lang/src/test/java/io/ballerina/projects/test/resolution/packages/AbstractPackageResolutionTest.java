@@ -30,7 +30,7 @@ import org.testng.Assert;
 
 import io.ballerina.fs.Path;
 import java.util.Collection;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents an abstract package resolution test case.

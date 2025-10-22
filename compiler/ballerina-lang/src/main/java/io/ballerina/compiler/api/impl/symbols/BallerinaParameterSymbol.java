@@ -29,7 +29,7 @@ import org.wso2.ballerinalang.compiler.util.CompilerContext;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.compiler.api.symbols.SymbolKind.PARAMETER;
 

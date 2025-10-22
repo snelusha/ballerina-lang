@@ -26,7 +26,7 @@ import org.wso2.ballerinalang.compiler.tree.statements.BLangStatement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represents a function/method body with zero or more statements.

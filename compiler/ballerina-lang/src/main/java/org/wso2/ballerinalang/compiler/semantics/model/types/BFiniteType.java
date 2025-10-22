@@ -35,7 +35,7 @@ import org.wso2.ballerinalang.compiler.util.TypeTags;
 import org.wso2.ballerinalang.util.Flags;
 
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.types.Core.getComplexSubtypeData;
 import static io.ballerina.types.Core.singleShape;

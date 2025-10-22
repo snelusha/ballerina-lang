@@ -34,7 +34,7 @@ import org.wso2.ballerinalang.util.Flags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 import static io.ballerina.compiler.api.symbols.SymbolKind.CONSTANT;
 import static io.ballerina.compiler.api.symbols.SymbolKind.ENUM_MEMBER;

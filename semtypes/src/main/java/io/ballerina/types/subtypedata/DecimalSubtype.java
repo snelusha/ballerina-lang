@@ -28,7 +28,7 @@ import io.ballerina.types.SubtypeData;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Represent DecimalSubtype.

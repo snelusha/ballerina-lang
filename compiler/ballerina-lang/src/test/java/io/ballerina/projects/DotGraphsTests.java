@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import io.ballerina.fs.Path;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.StringJoiner;
+import io.ballerina.fs.StringJoiner;
 
 /**
  * Contains cases test {@code DotGraphs} utility.
