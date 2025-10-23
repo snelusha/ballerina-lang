@@ -123,11 +123,11 @@ abstract class StringTextDocument extends TextDocument {
     static class LazyStringTextDocument extends StringTextDocument {
 
         private final Supplier<String> text;
-        private WeakReference<String> cachedText;
+        private String cachedText;
 
         LazyStringTextDocument(Supplier<String> text) {
             this.text = text;
-            this.cachedText = new WeakReference<>(null);
+            this.cachedText = text.get();
         }
 
         @Override
@@ -141,13 +141,7 @@ abstract class StringTextDocument extends TextDocument {
         }
 
         private String getText() {
-            String cached = cachedText.get();
-            if (cached == null) {
-                cached = text.get();
-                cachedText = new WeakReference<>(cached);
-            }
-            assert cached != null : "LazyStringTextDocument text supplier should not return null";
-            return cached;
+          return this.cachedText;
         }
     }
 }
