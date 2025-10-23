@@ -17,6 +17,10 @@
  */
 package org.wso2.ballerinalang.compiler.diagnostic;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import io.ballerina.compiler.api.impl.SymbolFactory;
 import io.ballerina.compiler.api.impl.symbols.TypesFactory;
 import io.ballerina.compiler.api.symbols.Symbol;
@@ -42,16 +46,9 @@ import org.wso2.ballerinalang.compiler.tree.BLangPackage;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 import org.wso2.ballerinalang.compiler.util.Name;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * Logger class for logging various compiler diagnostics.
- * 
+ *
  * @since 2.0.0
  */
 public class BLangDiagnosticLog implements DiagnosticLog {
@@ -61,7 +58,6 @@ public class BLangDiagnosticLog implements DiagnosticLog {
     private static final String WARNING_PREFIX = "warning";
     private static final String NOTE_PREFIX = "note";
     private static final String HINT_PREFIX = "hint";
-    private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("compiler", Locale.getDefault());
 
     private int errorCount = 0;
     private final PackageCache packageCache;
@@ -149,7 +145,7 @@ public class BLangDiagnosticLog implements DiagnosticLog {
 
     /**
      * Set the error count.
-     * 
+     *
      * @param errorCount Error count
      */
     public void setErrorCount(int errorCount) {
@@ -192,15 +188,15 @@ public class BLangDiagnosticLog implements DiagnosticLog {
 
     @Override
     public void logDiagnostic(DiagnosticSeverity severity,
-                       ModuleDescriptor moduleDescriptor,
-                       Location location,
-                       CharSequence message) {
+                              ModuleDescriptor moduleDescriptor,
+                              Location location,
+                              CharSequence message) {
         reportDiagnostic(moduleDescriptor, null, location, message.toString(), severity, new Object[] {});
     }
 
     /**
      * Report a diagnostic for a given package.
-     * 
+     *
      * @param pkgId Package ID of the diagnostic associated with
      * @param diagnostic the diagnostic to be logged
      */
@@ -215,8 +211,7 @@ public class BLangDiagnosticLog implements DiagnosticLog {
     // private helper methods
 
     private String formatMessage(String prefix, DiagnosticCode code, Object[] args) {
-        String msgKey = MESSAGES.getString(prefix + "." + code.messageKey());
-        return MessageFormat.format(msgKey, args);
+        throw new RuntimeException();
     }
 
     private void reportDiagnostic(ModuleDescriptor moduleDescriptor, DiagnosticCode diagnosticCode, Location location,
@@ -224,8 +219,8 @@ public class BLangDiagnosticLog implements DiagnosticLog {
         PackageID pkgId = null;
         if (moduleDescriptor != null) {
             pkgId = new PackageID(new Name(moduleDescriptor.org().value()),
-                                  new Name(moduleDescriptor.name().toString()),
-                                  new Name(moduleDescriptor.version().toString()));
+                    new Name(moduleDescriptor.name().toString()),
+                    new Name(moduleDescriptor.version().toString()));
         }
         reportDiagnostic(pkgId, diagnosticCode, location, msg, severity, args);
     }
@@ -243,7 +238,7 @@ public class BLangDiagnosticLog implements DiagnosticLog {
         DiagnosticInfo diagInfo;
         if (diagnosticCode != null) {
             diagInfo = new DiagnosticInfo(diagnosticCode.diagnosticId(), diagnosticCode.messageKey(),
-                                                         diagnosticCode.severity());
+                    diagnosticCode.severity());
         } else {
             diagInfo = new DiagnosticInfo(null, msg, severity);
         }
