@@ -17,6 +17,22 @@
  */
 package org.wso2.ballerinalang.compiler.semantics.analyzer;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Stack;
+
 import io.ballerina.tools.diagnostics.DiagnosticCode;
 import io.ballerina.tools.diagnostics.Location;
 import io.ballerina.types.PredefinedType;
@@ -121,23 +137,6 @@ import org.wso2.ballerinalang.compiler.util.Unifier;
 import org.wso2.ballerinalang.util.Flags;
 import org.wso2.ballerinalang.util.Lists;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Stack;
-
-import static java.lang.String.format;
 import static org.ballerinalang.model.symbols.SymbolOrigin.BUILTIN;
 import static org.ballerinalang.model.symbols.SymbolOrigin.SOURCE;
 import static org.ballerinalang.model.symbols.SymbolOrigin.VIRTUAL;
@@ -768,7 +767,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
 
                 if (!itr.hasNext()) {
                     throw new IllegalArgumentException(
-                            format("Union type '%s' does not have member types", type));
+                            "Union type '" + type + "' does not have member types");
                 }
 
                 BType member = Types.getImpliedType(itr.next());
@@ -1073,7 +1072,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
             BUnionType type = (BUnionType) Types.getImpliedType(entry.symbol.type);
             symTable.jsonType = new BJSONType(types.semTypeCtx, type);
             Optional<BIntersectionType> immutableType = Types.getImmutableType(symTable, PackageID.ANNOTATIONS,
-                                                                               type);
+                    type);
             if (immutableType.isPresent()) {
                 Types.addImmutableType(symTable, PackageID.ANNOTATIONS, symTable.jsonType, immutableType.get());
             }
@@ -1667,10 +1666,10 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
 
                 if (paramValType != null) {
                     BTypeSymbol tSymbol = new BTypeSymbol(SymTag.TYPE, Flags.PARAMETERIZED | tempSymbol.flags,
-                                                          tempSymbol.name, tempSymbol.originalName, tempSymbol.pkgID,
-                                                          null, func.symbol, tempSymbol.pos, VIRTUAL);
+                            tempSymbol.name, tempSymbol.originalName, tempSymbol.pkgID,
+                            null, func.symbol, tempSymbol.pos, VIRTUAL);
                     tSymbol.type = new BParameterizedType(paramValType, (BVarSymbol) tempSymbol,
-                                                          tSymbol, tempSymbol.name, parameterizedTypeInfo.index);
+                            tSymbol, tempSymbol.name, parameterizedTypeInfo.index);
                     tSymbol.type.addFlags(Flags.PARAMETERIZED);
 
                     userDefinedTypeNode.symbol = tSymbol;
@@ -1756,7 +1755,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
     }
 
     public ParameterizedTypeInfo getTypedescParamValueType(List<BLangSimpleVariable> params,
-                                                            AnalyzerData data, BSymbol varSym) {
+                                                           AnalyzerData data, BSymbol varSym) {
         for (int i = 0; i < params.size(); i++) {
             BLangSimpleVariable param = params.get(i);
 
@@ -1800,9 +1799,9 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
                 invokableType = new BInvokableType(symTable.typeEnv(), List.of(), null, null, null);
                 invokableType.setFlags(Flags.asMask(functionTypeNode.flagSet));
                 invokableTypeSymbol = Symbols.createInvokableTypeSymbol(SymTag.FUNCTION_TYPE,
-                                                                        Flags.asMask(functionTypeNode.flagSet),
-                                                                        env.enclPkg.symbol.pkgID, invokableType,
-                                                                        env.scope.owner, functionTypeNode.pos, VIRTUAL);
+                        Flags.asMask(functionTypeNode.flagSet),
+                        env.enclPkg.symbol.pkgID, invokableType,
+                        env.scope.owner, functionTypeNode.pos, VIRTUAL);
                 invokableTypeSymbol.params = null;
                 invokableTypeSymbol.restParam = null;
                 invokableTypeSymbol.returnType = null;
@@ -1942,16 +1941,16 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
         switch (opKind) {
             case ADD:
                 validNumericOrStringTypeExists = (types.validNumericTypeExists(lhsType) &&
-                                                  types.validNumericTypeExists(rhsType)) ||
-                                                 (types.validStringOrXmlTypeExists(lhsType) &&
-                                                  types.validStringOrXmlTypeExists(rhsType));
+                        types.validNumericTypeExists(rhsType)) ||
+                        (types.validStringOrXmlTypeExists(lhsType) &&
+                                types.validStringOrXmlTypeExists(rhsType));
                 break;
             case SUB:
             case DIV:
             case MUL:
             case MOD:
                 validNumericOrStringTypeExists = types.validNumericTypeExists(lhsType) &&
-                                                 types.validNumericTypeExists(rhsType);
+                        types.validNumericTypeExists(rhsType);
                 break;
             default:
                 return symTable.notFoundSymbol;
@@ -2382,7 +2381,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
                 dlog.error(intersectionTypeNode.pos, DiagnosticErrorCode.INVALID_READONLY_OBJECT_INTERSECTION_TYPE);
             } else {
                 dlog.error(intersectionTypeNode.pos, DiagnosticErrorCode.INVALID_READONLY_INTERSECTION_TYPE,
-                           potentialIntersectionType);
+                        potentialIntersectionType);
             }
             return symTable.semanticError;
         }
@@ -2399,14 +2398,14 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
             flagSet = new HashSet<>();
         }
         return ImmutableTypeCloner.getImmutableIntersectionType(intersectionTypeNode.pos, types,
-                        potentialIntersectionType,
+                potentialIntersectionType,
                 data.env, symTable, anonymousModelHelper, names, flagSet);
     }
 
     public BIntersectionType createIntersectionErrorType(BErrorType intersectionErrorType,
-                                                          Location pos,
-                                                          LinkedHashSet<BType> constituentBTypes,
-                                                          boolean isAlreadyDefinedDetailType, SymbolEnv env) {
+                                                         Location pos,
+                                                         LinkedHashSet<BType> constituentBTypes,
+                                                         boolean isAlreadyDefinedDetailType, SymbolEnv env) {
 
         BSymbol owner = intersectionErrorType.tsymbol.owner;
         PackageID pkgId = intersectionErrorType.tsymbol.pkgID;
@@ -2428,7 +2427,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
         }
 
         BLangRecordTypeNode detailRecordTypeNode = TypeDefBuilderHelper.createRecordTypeNode(new ArrayList<>(),
-                                                                                             detailRecord, pos);
+                detailRecord, pos);
         BLangTypeDefinition detailRecordTypeDefinition = TypeDefBuilderHelper.createTypeDefinitionForTSymbol(
                 detailRecord, detailRecordSymbol, detailRecordTypeNode, env);
         detailRecordTypeDefinition.pos = pos;
@@ -2448,7 +2447,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
     }
 
     public BType getPotentialIntersection(Types.IntersectionContext intersectionContext,
-                                           BType lhsType, BType rhsType, SymbolEnv env) {
+                                          BType lhsType, BType rhsType, SymbolEnv env) {
         if (Types.getImpliedType(lhsType) == symTable.readonlyType) {
             return rhsType;
         }
@@ -2520,7 +2519,7 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
         if (!Symbols.isFlagOn(annotationSymbol.flags, Flags.CONSTANT)) {
             annotationAttachment.annotationAttachmentSymbol =
                     new BAnnotationAttachmentSymbol(annotationSymbol, env.enclPkg.packageID, env.scope.owner,
-                                                    annotationAttachment.pos, SOURCE, annotationSymbol.attachedType);
+                            annotationAttachment.pos, SOURCE, annotationSymbol.attachedType);
             return;
         }
 
@@ -2535,8 +2534,8 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
         }
         boolean isSourceOnlyAnon = isSourceAnonOnly(annotationSymbol.points);
         BConstantSymbol constantSymbol = new BConstantSymbol(0, Names.EMPTY, Names.EMPTY, env.enclPkg.packageID,
-                                                             attachedType, attachedType, env.scope.owner,
-                                                             annotationAttachment.pos, VIRTUAL);
+                attachedType, attachedType, env.scope.owner,
+                annotationAttachment.pos, VIRTUAL);
 
         BLangConstantValue constAnnotationValue;
 
@@ -2563,10 +2562,10 @@ public class SymbolResolver extends BLangNodeTransformer<SymbolResolver.Analyzer
 
         annotationAttachment.annotationAttachmentSymbol =
                 new BAnnotationAttachmentSymbol.BConstAnnotationAttachmentSymbol(annotationSymbol,
-                                                                                 env.enclPkg.packageID,
-                                                                                 env.scope.owner,
-                                                                                 annotationAttachment.pos, SOURCE,
-                                                                                 constantSymbol);
+                        env.enclPkg.packageID,
+                        env.scope.owner,
+                        annotationAttachment.pos, SOURCE,
+                        constantSymbol);
     }
 
     private boolean isSourceAnonOnly(Set<AttachPoint> attachPoints) {

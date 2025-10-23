@@ -248,7 +248,7 @@ public class SymbolTable {
         this.rootPkgNode = (BLangPackage) TreeBuilder.createPackageNode(types.typeEnv());
         this.rootPkgSymbol = new BPackageSymbol(PackageID.ANNOTATIONS, null, null, BUILTIN);
         this.builtinPos = new BLangDiagnosticLocation(Names.EMPTY.value, -1, -1,
-                                            -1, -1);
+                -1, -1);
         this.rootPkgNode.pos = this.builtinPos;
         this.rootPkgNode.symbol = this.rootPkgSymbol;
         this.rootScope = new Scope(rootPkgSymbol);
@@ -256,7 +256,7 @@ public class SymbolTable {
         this.rootPkgSymbol.pos = this.builtinPos;
 
         this.notFoundSymbol = new BSymbol(SymTag.NIL, Flags.PUBLIC, Names.INVALID, rootPkgSymbol.pkgID, noType,
-                                          rootPkgSymbol, builtinPos, SymbolOrigin.VIRTUAL);
+                rootPkgSymbol, builtinPos, SymbolOrigin.VIRTUAL);
         // Initialize built-in types in Ballerina
         initializeType(intType, TypeKind.INT.typeName(), BUILTIN);
         initializeType(byteType, TypeKind.BYTE.typeName(), BUILTIN);
@@ -333,7 +333,7 @@ public class SymbolTable {
 
         this.anyAndReadonly =
                 ImmutableTypeCloner.getImmutableIntersectionType(this.anyType, this, names, this.types,
-                                                                 rootPkgSymbol.pkgID);
+                        rootPkgSymbol.pkgID);
         initializeType(this.anyAndReadonly, this.anyAndReadonly.effectiveType.name.getValue(), BUILTIN);
 
         // Initialize the invokable type
@@ -405,22 +405,22 @@ public class SymbolTable {
 
     public void loadPredeclaredModules() {
         this.predeclaredModules = Map.ofEntries(Map.entry(Names.BOOLEAN, this.langBooleanModuleSymbol),
-                                                Map.entry(Names.DECIMAL, this.langDecimalModuleSymbol),
-                                                Map.entry(Names.ERROR, this.langErrorModuleSymbol),
-                                                Map.entry(Names.FLOAT, this.langFloatModuleSymbol),
-                                                Map.entry(Names.FUNCTION, this.langFunctionModuleSymbol),
-                                                Map.entry(Names.FUTURE, this.langFutureModuleSymbol),
-                                                Map.entry(Names.INT, this.langIntModuleSymbol),
-                                                Map.entry(Names.MAP, this.langMapModuleSymbol),
-                                                Map.entry(Names.NATURAL, this.langNaturalModuleSymbol),
-                                                Map.entry(Names.OBJECT, this.langObjectModuleSymbol),
-                                                Map.entry(Names.STREAM, this.langStreamModuleSymbol),
-                                                Map.entry(Names.STRING, this.langStringModuleSymbol),
-                                                Map.entry(Names.TABLE, this.langTableModuleSymbol),
-                                                Map.entry(Names.TRANSACTION, this.langTransactionModuleSymbol),
-                                                Map.entry(Names.TYPEDESC, this.langTypedescModuleSymbol),
-                                                Map.entry(Names.XML, this.langXmlModuleSymbol)
-                );
+                Map.entry(Names.DECIMAL, this.langDecimalModuleSymbol),
+                Map.entry(Names.ERROR, this.langErrorModuleSymbol),
+                Map.entry(Names.FLOAT, this.langFloatModuleSymbol),
+                Map.entry(Names.FUNCTION, this.langFunctionModuleSymbol),
+                Map.entry(Names.FUTURE, this.langFutureModuleSymbol),
+                Map.entry(Names.INT, this.langIntModuleSymbol),
+                Map.entry(Names.MAP, this.langMapModuleSymbol),
+                Map.entry(Names.NATURAL, this.langNaturalModuleSymbol),
+                Map.entry(Names.OBJECT, this.langObjectModuleSymbol),
+                Map.entry(Names.STREAM, this.langStreamModuleSymbol),
+                Map.entry(Names.STRING, this.langStringModuleSymbol),
+                Map.entry(Names.TABLE, this.langTableModuleSymbol),
+                Map.entry(Names.TRANSACTION, this.langTransactionModuleSymbol),
+                Map.entry(Names.TYPEDESC, this.langTypedescModuleSymbol),
+                Map.entry(Names.XML, this.langXmlModuleSymbol)
+        );
     }
 
     public void initializeType(BType type, String name, SymbolOrigin origin) {
@@ -429,12 +429,12 @@ public class SymbolTable {
 
     private void initializeType(BType type, Name name, SymbolOrigin origin) {
         defineType(type, new BTypeSymbol(SymTag.TYPE, Flags.PUBLIC, name, rootPkgSymbol.pkgID, type, rootPkgSymbol,
-                                         builtinPos, origin));
+                builtinPos, origin));
     }
 
     private void initializeTSymbol(BType type, Name name, PackageID packageID) {
         type.tsymbol = new BTypeSymbol(SymTag.TYPE_DEF, Flags.PUBLIC, name, packageID, type, rootPkgSymbol, builtinPos,
-                                       BUILTIN);
+                BUILTIN);
     }
 
     private void defineType(BType type, BTypeSymbol tSymbol) {
@@ -468,7 +468,7 @@ public class SymbolTable {
         this.xmlPIType.tsymbol.owner = this.langXmlModuleSymbol;
         this.xmlTextType.tsymbol.owner = this.langXmlModuleSymbol;
     }
-    
+
     public void updateRegExpTypeOwners() {
         this.regExpType.tsymbol.owner = this.langRegexpModuleSymbol;
     }
@@ -812,7 +812,7 @@ public class SymbolTable {
                 BType unsignedIntTypeLhs = unsignedIntTypes[i];
                 BType unsignedIntTypeRhs = unsignedIntTypes[j];
                 defineBinaryOperator(OperatorKind.BITWISE_AND, unsignedIntTypeLhs, unsignedIntTypeRhs,
-                                     i <= j ? unsignedIntTypeLhs : unsignedIntTypeRhs);
+                        i <= j ? unsignedIntTypeLhs : unsignedIntTypeRhs);
             }
         }
 
@@ -844,7 +844,7 @@ public class SymbolTable {
                 BType unsignedIntTypeLhs = unsignedIntTypes[i];
                 BType unsignedIntTypeRhs = unsignedIntTypes[j];
                 defineBinaryOperator(orOpKind, unsignedIntTypeLhs, unsignedIntTypeRhs,
-                                     i >= j ? unsignedIntTypeLhs : unsignedIntTypeRhs);
+                        i >= j ? unsignedIntTypeLhs : unsignedIntTypeRhs);
             }
         }
 
@@ -1122,7 +1122,7 @@ public class SymbolTable {
                                 BType retType) {
         BInvokableType opType = new BInvokableType(typeEnv(), paramTypes, retType, null);
         BOperatorSymbol symbol = new BOperatorSymbol(name, rootPkgSymbol.pkgID, opType, rootPkgSymbol, this.builtinPos,
-                                                     BUILTIN);
+                BUILTIN);
 
         BInvokableTypeSymbol typeSymbol = Symbols.createInvokableTypeSymbol(SymTag.FUNCTION_TYPE, Flags.ANY_FUNCTION,
                 rootPkgSymbol.pkgID, opType, rootPkgSymbol, this.builtinPos, BUILTIN);
@@ -1183,7 +1183,7 @@ public class SymbolTable {
     private void defineJsonCyclicTypeAndDependentTypes() {
         BUnionType jsonInternal =
                 BUnionType.create(typeEnv(), null, nilType, booleanType, intType, floatType, decimalType,
-                stringType);
+                        stringType);
         BArrayType arrayJsonTypeInternal = new BArrayType(typeEnv(), jsonInternal);
         BMapType mapJsonTypeInternal = new BMapType(typeEnv(), TypeTags.MAP, jsonInternal, null);
         jsonInternal.add(arrayJsonTypeInternal);
@@ -1197,7 +1197,7 @@ public class SymbolTable {
             Types.addImmutableType(this, pkgID, jsonType, immutableType.get());
         }
         jsonType.tsymbol = new BTypeSymbol(SymTag.TYPE, Flags.PUBLIC, Names.JSON, pkgID, jsonType,
-                                           rootPkgSymbol, builtinPos, BUILTIN);
+                rootPkgSymbol, builtinPos, BUILTIN);
 
         arrayJsonType = new BArrayType(typeEnv(), jsonType);
         mapJsonType = new BMapType(typeEnv(), TypeTags.MAP, jsonType, null);
@@ -1206,7 +1206,7 @@ public class SymbolTable {
     private void defineAnydataCyclicTypeAndDependentTypes() {
         BUnionType anyDataInternal =
                 BUnionType.create(typeEnv(), null, nilType, booleanType, intType, floatType, decimalType,
-                stringType, xmlType);
+                        stringType, xmlType);
         addCyclicArrayMapTableOfMapMembers(anyDataInternal);
 
         anydataType = new BAnydataType(types.typeCtx(), anyDataInternal);
@@ -1217,7 +1217,7 @@ public class SymbolTable {
         }
 
         anydataType.tsymbol = new BTypeSymbol(SymTag.TYPE, Flags.PUBLIC, Names.ANYDATA, pkgID,
-                                              anydataType, rootPkgSymbol, builtinPos, BUILTIN);
+                anydataType, rootPkgSymbol, builtinPos, BUILTIN);
         arrayAnydataType = new BArrayType(typeEnv(), anydataType);
         mapAnydataType = new BMapType(typeEnv(), TypeTags.MAP, anydataType, null);
         anydataOrReadonly = BUnionType.create(typeEnv(), null, anydataType, readonlyType);
