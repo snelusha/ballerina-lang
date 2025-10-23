@@ -74,23 +74,8 @@ public class BasicTypeCode {
         return new BasicTypeCode(code);
     }
 
-    // Only used for .toString() method to aid debugging.
-    private static Map<Integer, String> fieldNames = new HashMap<>();
-    static {
-        for (Field field : BasicTypeCode.class.getDeclaredFields()) {
-            if (field.getType() == BasicTypeCode.class) {
-                try {
-                    BasicTypeCode o = (BasicTypeCode) field.get(null);
-                    fieldNames.put(o.code, field.getName());
-                } catch (IllegalAccessException e) {
-                    throw new IllegalStateException();
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
-        return fieldNames.get(this.code);
+        return "something";
     }
 }
