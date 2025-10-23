@@ -69,7 +69,7 @@ public class SyntaxDiagnostic extends Diagnostic {
 
     @Override
     public String message() {
-        return DiagnosticMessageHelper.getDiagnosticMessage(nodeDiagnostic.diagnosticCode(), nodeDiagnostic.args());
+        return "just-skip";
     }
 
     @Override
