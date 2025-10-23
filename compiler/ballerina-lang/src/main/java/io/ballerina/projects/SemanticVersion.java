@@ -17,10 +17,6 @@
  */
 package io.ballerina.projects;
 
-import com.github.zafarkhaja.semver.ParseException;
-import com.github.zafarkhaja.semver.UnexpectedCharacterException;
-import com.github.zafarkhaja.semver.Version;
-
 import java.util.Objects;
 
 /**
@@ -29,136 +25,74 @@ import java.util.Objects;
  * @since 2.0.0
  */
 public class SemanticVersion {
-    private final Version version;
 
-    private SemanticVersion(Version version) {
-        this.version = version;
+    private SemanticVersion() {
+
     }
 
     public static SemanticVersion from(String versionString) {
-        try {
-            Version v = Version.valueOf(versionString);
-            return new SemanticVersion(v);
-        } catch (IllegalArgumentException e) {
-            throw new ProjectException("Version cannot be empty");
-        } catch (UnexpectedCharacterException e) {
-            throw new ProjectException("Invalid version: '" + versionString + "'. " + e.toString());
-        } catch (ParseException e) {
-            throw new ProjectException("Invalid version: '" + versionString + "'. " + e.toString());
-        }
+        return new SemanticVersion();
     }
 
     public int major() {
-        return version.getMajorVersion();
+        return 1;
     }
 
     public int minor() {
-        return version.getMinorVersion();
+        return 0;
     }
 
     public int patch() {
-        return version.getPatchVersion();
+        return 0;
     }
 
     public String preReleasePart() {
-        return version.getPreReleaseVersion();
+        return "";
     }
 
     public String buildMetadata() {
-        return version.getBuildMetadata();
+        return "";
     }
 
     public boolean isStable() {
-        if (this.major() == 0) {
-            return false;
-        }
-
-        return !isPreReleaseVersion();
+        return true;
     }
 
     public boolean isPreReleaseVersion() {
-        String preReleaseComp = version.getPreReleaseVersion();
-        return preReleaseComp != null && !preReleaseComp.trim().isEmpty();
+        return false;
     }
 
     public boolean isInitialVersion() {
-        return this.major() == 0;
+        return false;
     }
 
     public boolean greaterThan(SemanticVersion other) {
-        return this.version.greaterThan(other.version);
+        return false;
     }
 
     public boolean greaterThanOrEqualTo(SemanticVersion other) {
-        return this.version.greaterThanOrEqualTo(other.version);
+        return true;
     }
 
     public boolean lessThan(SemanticVersion other) {
-        return this.version.lessThan(other.version);
+        return false;
     }
 
     public boolean lessThanOrEqualTo(SemanticVersion other) {
-        return this.version.lessThanOrEqualTo(other.version);
+        return true;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
 
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-
-        SemanticVersion otherSemVer = (SemanticVersion) other;
-        return version.equals(otherSemVer.version);
-    }
-
-    @Override
-    public String toString() {
-        return version.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return version.hashCode();
-    }
 
     public VersionCompatibilityResult compareTo(SemanticVersion other) {
-        Objects.requireNonNull(other);
-
-        if (this.equals(other)) {
-            return VersionCompatibilityResult.EQUAL;
-        }
-
-        if (this.major() != other.major()) {
-            return VersionCompatibilityResult.INCOMPATIBLE;
-        }
-
-        if (this.isInitialVersion() && (this.minor() != other.minor())) {
-            return VersionCompatibilityResult.INCOMPATIBLE;
-        }
-
-        // We've eliminated initial versions and versions with different major component.
-        // Now we just need to check minor, patch and pre-release components.
-        int result = this.version.compareTo(other.version);
-        if (result < 0) {
-            return VersionCompatibilityResult.LESS_THAN;
-        } else {
-            return VersionCompatibilityResult.GREATER_THAN;
-        }
+        return VersionCompatibilityResult.EQUAL;
     }
 
-    /**
-     * Represents the version compatibility between two {@code SemanticVersion} instances.
-     *
-     * @since 2.0.0
-     */
     public enum VersionCompatibilityResult {
         INCOMPATIBLE,
         EQUAL,
         LESS_THAN,
         GREATER_THAN
     }
+
 }
