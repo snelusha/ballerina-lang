@@ -21,6 +21,11 @@ plugins {
 
 dependencies {
     implementation libs.apache.commons.text
+    testImplementation libs.testng
+}
+
+test {
+    useTestNG() {}
 }
 
 description = 'Identifier Utils'
