@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.ballerinalang'
+version = '2201.14.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':ballerina-tools-api')
+}

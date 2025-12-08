@@ -10,7 +10,7 @@ Lexer/Parser -> Type Check -> Semantic analyzer -> Desugar -> BIR gen -> BIR ins
 
 Above `BIR gen` phase outputs the BIR format that will be used by the later phases.
 By default BIR is represented as an internal object model, via set of sub classes of
-`org.wso2.ballerinalang.compiler.bir.model.BIRNode` class and `org.wso2.ballerinalang.compiler.bir.model.BIRInstruction`
+`org.wso2.ballerinalang.bir.model.bir.BIRNode` class and `org.wso2.ballerinalang.bir.model.bir.BIRInstruction`
 class.
 
 You may view this in text format by passing `--dump-bir` flag to the `bal build` command or save it to a binary

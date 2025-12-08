@@ -9,6 +9,9 @@ plugins {
 
 rootProject.name = 'ballerina-parent'
 include(':ballerina-tools-api')
+
+include(':ballerina-frontend')
+
 include(':ballerina-parser')
 include(':ballerina-compiler-api-test')
 include(':ballerina-lang')
@@ -149,6 +152,9 @@ include(':ballerina-profiler')
 //include(':ballerina-libs')
 include(':bir-spec')
 include(':semtypes')
+
+project(':ballerina-frontend').projectDir = file('compiler/ballerina-frontend')
+
 project(':ballerina-tools-api').projectDir = file('compiler/ballerina-tools-api')
 project(':ballerina-parser').projectDir = file('compiler/ballerina-parser')
 project(':ballerina-compiler-api-test').projectDir = file('tests/ballerina-compiler-api-test')

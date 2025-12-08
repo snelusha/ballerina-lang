@@ -223,7 +223,7 @@ public class BallerinaAnnotationProcessor extends AbstractProcessor {
         try {
             writer.write("package " + pkgName + ";\n\n");
             writer.write("import org.ballerinalang.annotation.JavaSPIService;\n");
-            writer.write("import org.ballerinalang.model.types.TypeKind;\n");
+            writer.write("import org.wso2.ballerinalang.types.model.TypeKind;\n");
             writer.write("import org.ballerinalang.natives.NativeElementRepository;\n");
             writer.write("import org.ballerinalang.natives.NativeElementRepository.NativeActionDef;\n");
             writer.write("import org.ballerinalang.natives.NativeElementRepository.NativeFunctionDef;\n");

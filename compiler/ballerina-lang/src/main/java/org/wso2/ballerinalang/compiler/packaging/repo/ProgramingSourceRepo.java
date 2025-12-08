@@ -7,8 +7,6 @@ import org.wso2.ballerinalang.compiler.packaging.converters.PathConverter;
 
 import java.nio.file.Path;
 
-import static org.wso2.ballerinalang.compiler.packaging.Patten.path;
-
 /**
  * Calculate bal files' path pattens in a project, excluding test files.
  */

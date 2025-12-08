@@ -20,6 +20,8 @@ plugins {
 }
 
 dependencies {
+    implementation project(':ballerina-frontend')
+
     implementation project(':ballerina-tools-api')
     implementation project(':ballerina-parser')
     implementation project(':ballerina-runtime')
