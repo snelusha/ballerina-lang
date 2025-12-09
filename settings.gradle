@@ -277,6 +277,9 @@ project(':ls-extensions:trigger-service').projectDir = file('misc/ls-extensions/
 project(':ls-extensions:bal-shell-service').projectDir = file('misc/ls-extensions/modules/bal-shell-service')
 project(':ballerina-profiler').projectDir = file('bvm/ballerina-profiler')
 
+include(':ballerina-backend')
+project(':ballerina-backend').projectDir = file ('compiler/ballerina-backend')
+
 buildCache {
     remote(HttpBuildCache) {
         url = "http://192.168.58.132:5071/cache/"
