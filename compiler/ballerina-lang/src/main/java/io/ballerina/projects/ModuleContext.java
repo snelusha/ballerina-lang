@@ -31,6 +31,7 @@ import org.ballerinalang.model.elements.Flag;
 import org.ballerinalang.model.elements.PackageID;
 import org.wso2.ballerinalang.compiler.BIRPackageSymbolEnter;
 import org.wso2.ballerinalang.compiler.PackageCache;
+import org.wso2.ballerinalang.compiler.bir.model.BIRPackageJsonSerializer;
 import org.wso2.ballerinalang.compiler.bir.writer.BIRBinaryWriter;
 import org.wso2.ballerinalang.compiler.diagnostic.BLangDiagnosticLocation;
 import org.wso2.ballerinalang.compiler.semantics.analyzer.SymbolEnter;
@@ -504,6 +505,8 @@ public class ModuleContext {
                         new BIRBinaryWriter(moduleContext.bLangPackage.symbol.bir, symTable.typeEnv()).serialize());
                 moduleContext.bLangPackage.symbol.birPackageFile = birPackageFile;
             }
+            String json = BIRPackageJsonSerializer.toJson(moduleContext.bLangPackage.symbol.bir);
+            System.out.println(json);
             byte[] pkgBirBinaryContent = PackageFileWriter.writePackage(birPackageFile);
             birContent.writeBytes(pkgBirBinaryContent);
             return birContent;

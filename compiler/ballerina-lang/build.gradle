@@ -29,6 +29,7 @@ dependencies {
     implementation project(':maven-resolver')
     implementation project(':identifier-util')
     implementation libs.toml4j
+    implementation libs.gson
     implementation(libs.apache.commons.compress) {
         exclude group: 'commons-codec', module: 'commons-codec'
         exclude group: 'org.apache.commons', module: 'commons-lang3'
